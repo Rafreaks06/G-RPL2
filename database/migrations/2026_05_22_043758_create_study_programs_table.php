@@ -30,9 +30,6 @@ return new class extends Migration
             | Academic Information
             */
 
-            $table->string('degree_level')
-                ->default('S1');
-
             $table->unsignedInteger('total_sks')
                 ->default(144);
 
