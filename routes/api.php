@@ -1,25 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 use Illuminate\Http\Request;
-
 use App\Models\User;
-
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Admin\StudyProgramController;
 
 /*
-|--------------------------------------------------------------------------
 | Authentication Routes
-|--------------------------------------------------------------------------
 */
 
 Route::prefix('auth')->group(function () {
 
     /*
-    |--------------------------------------------------------------------------
     | Public Routes
-    |--------------------------------------------------------------------------
     */
 
     Route::post('/register', [
@@ -33,9 +27,7 @@ Route::prefix('auth')->group(function () {
     ])->middleware('throttle:login');
 
     /*
-    |--------------------------------------------------------------------------
     | Email Verification
-    |--------------------------------------------------------------------------
     */
 
     Route::get('/email/verify/{id}/{hash}', function (
@@ -47,9 +39,7 @@ Route::prefix('auth')->group(function () {
         $user = User::findOrFail($id);
 
         /*
-        |--------------------------------------------------------------------------
         | Validate Verification Hash
-        |--------------------------------------------------------------------------
         */
 
         if (! hash_equals(
@@ -64,9 +54,7 @@ Route::prefix('auth')->group(function () {
         }
 
         /*
-        |--------------------------------------------------------------------------
         | Already Verified
-        |--------------------------------------------------------------------------
         */
 
         if ($user->hasVerifiedEmail()) {
@@ -78,9 +66,7 @@ Route::prefix('auth')->group(function () {
         }
 
         /*
-        |--------------------------------------------------------------------------
         | Verify Email
-        |--------------------------------------------------------------------------
         */
 
         $user->markEmailAsVerified();
@@ -93,17 +79,13 @@ Route::prefix('auth')->group(function () {
       ->name('verification.verify');
 
     /*
-    |--------------------------------------------------------------------------
     | Protected Routes
-    |--------------------------------------------------------------------------
     */
 
     Route::middleware('auth:sanctum')->group(function () {
 
         /*
-        |--------------------------------------------------------------------------
         | Current User
-        |--------------------------------------------------------------------------
         */
 
         Route::get('/me', [
@@ -112,14 +94,65 @@ Route::prefix('auth')->group(function () {
         ]);
 
         /*
-        |--------------------------------------------------------------------------
         | Logout
-        |--------------------------------------------------------------------------
         */
 
         Route::post('/logout', [
             AuthController::class,
             'logout'
+        ]);
+    });
+});
+
+/*
+| Admin Routes
+*/
+
+Route::middleware([
+    'auth:sanctum',
+    'role:system_admin'
+])->prefix('admin')->group(function () {
+
+    /*
+    | Study Programs
+    */
+
+    Route::prefix('study-programs')->group(function () {
+
+        /*
+        | Get All Study Programs
+        */
+
+        Route::get('/', [
+            StudyProgramController::class,
+            'index'
+        ]);
+
+        /*
+        | Get Detail Study Program
+        */
+
+        Route::get('/{studyProgram}', [
+            StudyProgramController::class,
+            'show'
+        ]);
+
+        /*
+        | Create Study Program
+        */
+
+        Route::post('/', [
+            StudyProgramController::class,
+            'store'
+        ]);
+
+        /*
+        | Update Study Program
+        */
+
+        Route::put('/{studyProgram}', [
+            StudyProgramController::class,
+            'update'
         ]);
     });
 });
