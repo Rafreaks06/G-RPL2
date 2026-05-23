@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\Applicant;
 
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Validation\ValidationException;
@@ -21,37 +21,71 @@ class AuthService
         return DB::transaction(function () use ($request) {
 
             $user = User::create([
-                'name' => $request->name,
 
-                'email' => $request->email,
+                'name'
+                    => $request->name,
 
-                'password' => Hash::make(
-                    $request->password
-                ),
+                'email'
+                    => $request->email,
 
-                'is_active' => true,
+                'password'
+                    => Hash::make(
+                        $request->password
+                    ),
 
-                'status' => 'active',
+                'is_active'
+                    => true,
+
+                'status'
+                    => 'active',
             ]);
 
             /*
             | Default Role
             */
 
-            $user->assignRole('applicant');
+            $user->assignRole(
+                'applicant'
+            );
+
+            /*
+            | Create Applicant Master Data
+            */
+
+            Applicant::create([
+
+                'user_id'
+                    => $user->id,
+
+                'nik'
+                    => $request->nik,
+
+                'phone'
+                    => $request->phone,
+
+                'address'
+                    => $request->address,
+            ]);
 
             /*
             | Send Verification Email
             */
 
-            $user->sendEmailVerificationNotification();
+            $user
+                ->sendEmailVerificationNotification();
 
             return [
-                'success' => true,
 
-                'message' => 'Register success',
+                'success'
+                    => true,
 
-                'user' => $user
+                'message'
+                    => 'Register success',
+
+                'user'
+                    => $user->load(
+                        'applicant'
+                    ),
             ];
         });
     }
@@ -78,7 +112,9 @@ class AuthService
                 $user->password
             )
         ) {
+
             throw ValidationException::withMessages([
+
                 'email' => [
                     'Invalid credentials'
                 ]
@@ -93,10 +129,14 @@ class AuthService
             $user->hasRole('applicant') &&
             !$user->hasVerifiedEmail()
         ) {
-            return [
-                'success' => false,
 
-                'message' => 'Email not verified'
+            return [
+
+                'success'
+                    => false,
+
+                'message'
+                    => 'Email not verified'
             ];
         }
 
@@ -104,12 +144,18 @@ class AuthService
         | Account Status Check
         */
 
-        if ($user->status !== 'active') {
+        if (
+            !$user->is_active ||
+            $user->status !== 'active'
+        ) {
 
             return [
-                'success' => false,
 
-                'message' => 'Account inactive or suspended'
+                'success'
+                    => false,
+
+                'message'
+                    => 'Account inactive'
             ];
         }
 
@@ -118,17 +164,26 @@ class AuthService
         */
 
         $token = $user
-            ->createToken('auth_token')
-            ->plainTextToken;
+            ->createToken(
+                'auth_token'
+            )->plainTextToken;
 
         return [
-            'success' => true,
 
-            'message' => 'Login success',
+            'success'
+                => true,
 
-            'token' => $token,
+            'message'
+                => 'Login success',
 
-            'user' => $user
+            'token'
+                => $token,
+
+            'user'
+                => $user->load([
+                    'roles',
+                    'applicant',
+                ]),
         ];
     }
 
@@ -144,9 +199,12 @@ class AuthService
             ->delete();
 
         return [
-            'success' => true,
 
-            'message' => 'Logout success'
+            'success'
+                => true,
+
+            'message'
+                => 'Logout success'
         ];
     }
 }
