@@ -34,10 +34,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
-    protected $appends = [
-        'status',
-    ];
-
     protected function casts(): array
     {
         return [
@@ -56,23 +52,29 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function assessor()
     {
-        return $this->hasOne(Assessor::class);
+        return $this->hasOne(
+            Assessor::class
+        );
     }
 
     public function staffRpl()
     {
-        return $this->hasOne(StaffRpl::class);
+        return $this->hasOne(
+            StaffRpl::class
+        );
     }
 
     public function committee()
     {
-        return $this->hasOne(Committee::class);
+        return $this->hasOne(
+            Committee::class
+        );
     }
 
-    public function getStatusAttribute(): string
+    public function applicant()
     {
-        return $this->is_active
-            ? 'active'
-            : 'inactive';
+        return $this->hasOne(
+            Applicant::class
+        );
     }
 }
