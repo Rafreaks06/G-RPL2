@@ -29,6 +29,8 @@ class AuthService
                     $request->password
                 ),
 
+                'is_active' => true,
+
                 'status' => 'active',
             ]);
 

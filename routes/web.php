@@ -34,17 +34,26 @@ Route::view('/dashboard', 'pages.dashboard')
 
 Route::view('/applications', 'pages.applicant.applications');
 Route::view('/applications/create', 'pages.applicant.create');
+
 Route::view('/assessments', 'pages.assessor.assessments');
+
 Route::view('/approvals', 'pages.committee.approvals');
+
 Route::view('/submissions', 'pages.staff.submissions');
 
 Route::view('/admin/master-data', 'pages.admin.master-data');
+
 Route::view('/admin/users', 'pages.admin.users');
 Route::view('/admin/users/create', 'pages.admin.users-create');
 Route::view('/admin/users/{id}/edit', 'pages.admin.users-edit');
+
 Route::view('/admin/study-programs', 'pages.admin.study-programs');
 Route::view('/admin/study-programs/create', 'pages.admin.study-programs-create');
 Route::view('/admin/study-programs/{id}/edit', 'pages.admin.study-programs-edit');
+
+Route::view('/admin/courses', 'pages.admin.courses');
+Route::view('/admin/courses/create', 'pages.admin.courses-create');
+Route::view('/admin/courses/{id}/edit', 'pages.admin.courses-edit');
 
 Route::redirect('/master-data', '/admin/master-data');
 Route::redirect('/users', '/admin/users');
