@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\StudyProgramController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Admin\CourseManagementController;
+
 /*
 | Authentication Routes
 */
@@ -206,6 +208,60 @@ Route::middleware([
 
         Route::patch('/{user}/status', [
             UserManagementController::class,
+            'toggleStatus'
+        ]);
+    });
+
+    /*
+    | Course Management
+    */
+
+    Route::middleware([
+        'throttle:30,1'
+    ])->prefix('courses')->group(function () {
+
+        /*
+        | Get All Courses
+        */
+
+        Route::get('/', [
+            CourseManagementController::class,
+            'index'
+        ]);
+
+        /*
+        | Get Course Detail
+        */
+
+        Route::get('/{course}', [
+            CourseManagementController::class,
+            'show'
+        ]);
+
+        /*
+        | Create Course
+        */
+
+        Route::post('/', [
+            CourseManagementController::class,
+            'store'
+        ]);
+
+        /*
+        | Update Course
+        */
+
+        Route::put('/{course}', [
+            CourseManagementController::class,
+            'update'
+        ]);
+
+        /*
+        | Toggle Course Status
+        */
+
+        Route::patch('/{course}/status', [
+            CourseManagementController::class,
             'toggleStatus'
         ]);
     });
