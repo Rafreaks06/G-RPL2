@@ -19,9 +19,15 @@
                 </div>
                 <span class="connection-pill" data-api-status>Connecting</span>
             </div>
-            <div class="empty-state">
-                <strong>Endpoint master data belum tersedia.</strong>
-                <span>Halaman ini sudah diproteksi role admin melalui data user dari backend.</span>
+            <div class="dashboard-grid">
+                <a class="module-card" href="/admin/study-programs">
+                    <strong>Study Programs</strong>
+                    <span>Kelola program studi, total SKS, dan skema RPL yang didukung.</span>
+                </a>
+                <a class="module-card" href="/admin/courses">
+                    <strong>Courses</strong>
+                    <span>Kelola mata kuliah, semester, SKS, dan tipe rekognisi.</span>
+                </a>
             </div>
         </div>
     </section>

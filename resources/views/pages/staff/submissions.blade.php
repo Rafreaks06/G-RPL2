@@ -3,7 +3,7 @@
 @section('title', 'Submissions - G-RPL2')
 @section('page', 'submissions')
 @section('authRequired', 'true')
-@section('roleRequired', 'staff')
+@section('roleRequired', 'staff_rpl')
 
 @section('content')
     <section class="app-shell" data-protected-shell hidden>

@@ -34,7 +34,7 @@
                     <strong>Approvals</strong>
                     <span>Keputusan dan persetujuan komite.</span>
                 </a>
-                <a class="module-card" href="/submissions" data-role-card="staff" hidden>
+                <a class="module-card" href="/submissions" data-role-card="staff_rpl" hidden>
                     <strong>Submissions</strong>
                     <span>Review administrasi dan kelengkapan.</span>
                 </a>
@@ -49,6 +49,10 @@
                 <a class="module-card" href="/admin/study-programs" data-role-card="system_admin" hidden>
                     <strong>Study Programs</strong>
                     <span>Pengelolaan program studi dan konfigurasi RPL.</span>
+                </a>
+                <a class="module-card" href="/admin/courses" data-role-card="system_admin" hidden>
+                    <strong>Courses</strong>
+                    <span>Pengelolaan mata kuliah dan tipe rekognisi.</span>
                 </a>
             </div>
         </div>

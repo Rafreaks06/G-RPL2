@@ -20,10 +20,38 @@
                 </div>
                 <span class="connection-pill" data-api-status>Connecting</span>
             </div>
-            <div class="empty-state">
-                <strong>Halaman edit program studi siap consume detail dan update API.</strong>
-                <span>Route ini mengikuti dokumentasi frontend untuk edit study program.</span>
-            </div>
+            <form class="form-grid" data-study-program-form="edit">
+                <label>Code<input type="text" name="code" required maxlength="20"></label>
+                <label>Name<input type="text" name="name" required maxlength="255"></label>
+                <label>Total SKS<input type="number" name="total_sks" required min="1"></label>
+                <label>Max Convertible SKS<input type="number" name="max_convertible_sks" required min="1"></label>
+                <label>Supports A1
+                    <select name="supports_a1" required>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </label>
+                <label>Supports A2
+                    <select name="supports_a2" required>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </label>
+                <label>Hybrid Allowed
+                    <select name="is_hybrid_allowed" required>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </label>
+                <label>Status
+                    <select name="status" required>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </label>
+                <p class="form-message form-grid-full" data-form-message aria-live="polite"></p>
+                <button class="button" type="submit" data-submit-button>Update Study Program</button>
+            </form>
         </div>
     </section>
 @endsection

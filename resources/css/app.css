@@ -43,7 +43,9 @@ a {
 }
 
 button,
-input {
+input,
+select,
+textarea {
     font: inherit;
 }
 
@@ -269,7 +271,9 @@ label {
     font-weight: 700;
 }
 
-input {
+input,
+select,
+textarea {
     width: 100%;
     min-height: 44px;
     padding: 10px 12px;
@@ -279,7 +283,17 @@ input {
     background: #fff;
 }
 
-input:focus {
+textarea {
+    resize: vertical;
+}
+
+select[multiple] {
+    min-height: 132px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
     border-color: var(--primary);
     outline: 3px solid rgba(22, 102, 79, 0.14);
 }
@@ -410,8 +424,77 @@ input:focus {
     gap: 16px;
 }
 
+.form-grid-full {
+    grid-column: 1 / -1;
+}
+
 .form-grid .button {
     align-self: end;
+}
+
+.toolbar {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(150px, 0.5fr) minmax(140px, 0.4fr) auto;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.data-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    background: var(--surface);
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.data-table th {
+    color: var(--muted);
+    background: var(--surface-muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.data-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.table-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 8px;
+    color: var(--success);
+    background: #eaf7f0;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: capitalize;
+}
+
+.status-badge[data-status='inactive'] {
+    color: var(--danger);
+    background: #fff0ed;
 }
 
 .notice-page {
@@ -464,9 +547,15 @@ input:focus {
     }
 
     .workspace-header,
-    .status-panel div {
+    .status-panel div,
+    .toolbar {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .toolbar {
+        display: grid;
+        grid-template-columns: 1fr;
     }
 
     .form-grid {

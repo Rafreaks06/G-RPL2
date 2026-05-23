@@ -20,10 +20,24 @@
                 </div>
                 <span class="connection-pill" data-api-status>Connecting</span>
             </div>
-            <div class="empty-state">
-                <strong>Form user management siap dihubungkan ke API admin.</strong>
-                <span>Route ini mengikuti dokumentasi frontend untuk halaman create user.</span>
-            </div>
+            <form class="form-grid" data-admin-user-form="create">
+                <label>Name<input type="text" name="name" required maxlength="100"></label>
+                <label>Email<input type="email" name="email" required maxlength="50"></label>
+                <label>Password<input type="password" name="password" required minlength="8" value="123456"></label>
+                <label>Confirm Password<input type="password" name="password_confirmation" required minlength="8" value="123456"></label>
+                <label>NIP<input type="text" name="nip" required maxlength="30"></label>
+                <label>Phone<input type="text" name="phone" maxlength="20"></label>
+                <label>Role
+                    <select name="role" required>
+                        <option value="assessor">Assessor</option>
+                        <option value="staff_rpl">Staff RPL</option>
+                        <option value="committee">Committee</option>
+                    </select>
+                </label>
+                <label class="form-grid-full">Address<textarea name="address" rows="3"></textarea></label>
+                <p class="form-message form-grid-full" data-form-message aria-live="polite"></p>
+                <button class="button" type="submit" data-submit-button>Create User</button>
+            </form>
         </div>
     </section>
 @endsection

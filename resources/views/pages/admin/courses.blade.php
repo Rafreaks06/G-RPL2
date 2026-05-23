@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Users - G-RPL2')
-@section('page', 'users')
+@section('title', 'Courses - G-RPL2')
+@section('page', 'courses')
 @section('authRequired', 'true')
 @section('roleRequired', 'system_admin')
 
@@ -9,24 +9,22 @@
     <section class="app-shell" data-protected-shell hidden>
         <aside class="sidebar">
             <p class="eyebrow">Admin</p>
-            <h1>Users</h1>
-            <a class="button button-small" href="/admin/users/create">Create</a>
+            <h1>Courses</h1>
+            <a class="button button-small" href="/admin/courses/create">Create</a>
         </aside>
         <div class="workspace">
             <div class="workspace-header">
                 <div>
-                    <p class="eyebrow">User Management</p>
-                    <h2>Pengelolaan user</h2>
+                    <p class="eyebrow">Course Management</p>
+                    <h2>Daftar mata kuliah</h2>
                 </div>
                 <span class="connection-pill" data-api-status>Connecting</span>
             </div>
-            <form class="toolbar" data-admin-filter="users">
-                <input type="search" name="search" placeholder="Cari nama atau email">
-                <select name="role">
-                    <option value="">Semua role</option>
-                    <option value="assessor">Assessor</option>
-                    <option value="staff_rpl">Staff RPL</option>
-                    <option value="committee">Committee</option>
+
+            <form class="toolbar" data-admin-filter="courses">
+                <input type="search" name="search" placeholder="Cari kode atau nama">
+                <select name="study_program_id" data-study-program-filter>
+                    <option value="">Semua program studi</option>
                 </select>
                 <select name="is_active">
                     <option value="">Semua status</option>
@@ -42,17 +40,19 @@
                 <table class="data-table">
                     <thead>
                         <tr>
+                            <th>Code</th>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>NIP</th>
+                            <th>Program</th>
+                            <th>Semester</th>
+                            <th>SKS</th>
+                            <th>Type</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody data-users-body>
+                    <tbody data-courses-body>
                         <tr>
-                            <td colspan="6">Memuat user...</td>
+                            <td colspan="8">Memuat mata kuliah...</td>
                         </tr>
                     </tbody>
                 </table>

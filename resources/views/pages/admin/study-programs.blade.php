@@ -20,9 +20,26 @@
                 </div>
                 <span class="connection-pill" data-api-status>Connecting</span>
             </div>
-            <div class="empty-state">
-                <strong>Data program studi siap dihubungkan ke API admin.</strong>
-                <span>Route ini mengikuti dokumentasi frontend untuk study program list.</span>
+            <p class="form-message" data-page-message aria-live="polite"></p>
+
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>SKS</th>
+                            <th>RPL</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody data-study-programs-body>
+                        <tr>
+                            <td colspan="6">Memuat program studi...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
