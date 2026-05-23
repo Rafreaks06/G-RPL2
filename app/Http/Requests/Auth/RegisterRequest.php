@@ -21,6 +21,13 @@ class RegisterRequest extends FormRequest
     {
         return [
 
+            'nik' => [
+                'required',
+                'string',
+                'max:30',
+                'unique:applicants,nik'
+            ],
+
             'name' => [
                 'required',
                 'string',
@@ -32,6 +39,17 @@ class RegisterRequest extends FormRequest
                 'email',
                 'max:255',
                 'unique:users,email'
+            ],
+
+            'phone' => [
+                'required',
+                'string',
+                'max:20'
+            ],
+
+            'address' => [
+                'required',
+                'string'
             ],
 
             'password' => [
@@ -50,19 +68,38 @@ class RegisterRequest extends FormRequest
     {
         return [
 
-            'name.required' => 'Name is required',
+            'nik.required'
+                => 'NIK is required',
 
-            'email.required' => 'Email is required',
+            'nik.unique'
+                => 'NIK already registered',
 
-            'email.email' => 'Invalid email format',
+            'name.required'
+                => 'Name is required',
 
-            'email.unique' => 'Email already registered',
+            'email.required'
+                => 'Email is required',
 
-            'password.required' => 'Password is required',
+            'email.email'
+                => 'Invalid email format',
 
-            'password.min' => 'Password minimum 8 characters',
+            'email.unique'
+                => 'Email already registered',
 
-            'password.confirmed' => 'Password confirmation does not match',
+            'phone.required'
+                => 'Phone number is required',
+
+            'address.required'
+                => 'Address is required',
+
+            'password.required'
+                => 'Password is required',
+
+            'password.min'
+                => 'Password minimum 8 characters',
+
+            'password.confirmed'
+                => 'Password confirmation does not match',
         ];
     }
 }
