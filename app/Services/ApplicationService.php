@@ -74,6 +74,14 @@ class ApplicationService
     ): Application {
 
         /*
+        | Validate Applicant Profile
+        */
+
+        $this->validateApplicantProfile(
+            $applicant
+        );
+
+        /*
         | Only One Active Application
         */
 
@@ -272,6 +280,38 @@ class ApplicationService
             $application->id,
             $applicant
         );
+    }
+
+    /**
+     * Validate applicant profile completeness.
+     */
+    private function validateApplicantProfile(
+        Applicant $applicant
+    ): void {
+
+        $requiredFields = [
+
+            'birth_date',
+            'last_education',
+            'graduation_year',
+        ];
+
+        foreach (
+            $requiredFields as $field
+        ) {
+
+            if (
+                empty(
+                    $applicant->{$field}
+                )
+            ) {
+
+                abort(
+                    422,
+                    'Please complete your profile before creating an application.'
+                );
+            }
+        }
     }
 
     /**
