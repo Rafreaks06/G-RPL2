@@ -19,4 +19,11 @@ class Applicant extends Model
             User::class
         );
     }
+
+    public function applications()
+    {
+        return $this->hasMany(
+            Application::class
+        );
+    }
 }
