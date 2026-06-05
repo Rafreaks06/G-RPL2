@@ -45,6 +45,7 @@ Route::view('/assessments', 'pages.assessor.assessments');
 Route::view('/approvals', 'pages.committee.approvals');
 
 Route::view('/submissions', 'pages.staff.submissions');
+Route::view('/submissions/{id}', 'pages.staff.submission-detail');
 
 Route::view('/admin/master-data', 'pages.admin.master-data');
 
