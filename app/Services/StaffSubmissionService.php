@@ -3,8 +3,9 @@
 namespace App\Services;
 use App\Enums\ApplicationStatus;
 use App\Models\Application;
-use Illuminate\Database\Eloquent\Collection;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class StaffSubmissionService
 {
@@ -182,6 +183,60 @@ class StaffSubmissionService
             ->fresh()
             ->load(
                 'assignedAssessor'
+            );
+    }
+
+    /*
+    | Get All Assessors
+    */
+    public function getAssessors(): Collection
+    {
+        return User::query()
+            ->whereHas('roles',fn ($query) => $query->where('name','assessor'))
+            ->with('assessor')
+            ->get();
+    }
+
+    /*
+    | Download Document
+    */
+
+    public function downloadDocument(
+        int $applicationId,
+        int $documentId
+    )
+    {
+        $application = Application::query()
+
+            ->with('documents')
+
+            ->findOrFail(
+                $applicationId
+            );
+
+        $document = $application
+            ->documents()
+            ->findOrFail(
+                $documentId
+            );
+
+        if (
+            ! Storage::disk('public')
+                ->exists(
+                    $document->file_path
+                )
+        ) {
+
+            abort(
+                404,
+                'Document file not found.'
+            );
+        }
+
+        return Storage::disk('public')
+            ->download(
+                $document->file_path,
+                $document->file_name
             );
     }
 }

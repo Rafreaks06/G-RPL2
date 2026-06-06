@@ -1861,7 +1861,7 @@ function renderDocuments(documents, applicationId) {
 
         try {
             await downloadRequest(
-                `/applicant/applications/${applicationId}/documents/${button.dataset.downloadDocument}/download`,
+                `/staff/submissions/${applicationId}/documents/${button.dataset.downloadDocument}/download`,
                 button.dataset.fileName || 'document'
             );
         } catch (error) {
@@ -1992,11 +1992,11 @@ async function loadAssessorOptions() {
 
         select.innerHTML = assessors.length
             ? '<option value="">-- Pilih Assessor --</option>' +
-              assessors.map((a) => {
-                  const name = a.name || '-';
-                  const nip = a.assessor?.nip || '';
-                  return `<option value="${a.id}">${escapeHtml(name)}${nip ? ' (' + escapeHtml(nip) + ')' : ''}</option>`;
-              }).join('')
+            assessors.map((a) => {
+                const name = a.name || '-';
+                const nip = a.assessor?.nip || '';
+                return `<option value="${a.id}">${escapeHtml(name)}${nip ? ' (' + escapeHtml(nip) + ')' : ''}</option>`;
+            }).join('')
             : '<option value="">Tidak ada assessor tersedia</option>';
     } catch (error) {
         select.innerHTML = '<option value="">Gagal memuat assessor</option>';

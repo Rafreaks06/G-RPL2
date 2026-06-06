@@ -146,6 +146,7 @@ Route::middleware([
     'role:staff_rpl'
 ])->prefix('staff')->group(function () {
 
+    Route::get('/assessors', [SubmissionController::class,'assessors',]);
     Route::prefix('submissions')->group(function () {
 
         Route::get('/', [SubmissionController::class,'index',]);
@@ -153,7 +154,6 @@ Route::middleware([
         Route::patch('/{application}/review', [SubmissionController::class,'review',]);
         Route::patch('/{application}/return', [SubmissionController::class,'return',]);
         Route::patch('/{application}/assign-assessor',[SubmissionController::class,'assignAssessor',]);
+        Route::get('/{application}/documents/{document}/download',[SubmissionController::class,'downloadDocument']);
     });
-
-    Route::get('/assessors', [SubmissionController::class,'assessors',]);
 });

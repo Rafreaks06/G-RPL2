@@ -8,7 +8,6 @@ use App\Http\Requests\Staff\Submission\ReturnSubmissionRequest;
 use App\Http\Requests\Staff\Submission\AssignAssessorRequest;
 
 use App\Services\StaffSubmissionService;
-use App\Models\User;
 
 class SubmissionController extends Controller
 {
@@ -22,14 +21,10 @@ class SubmissionController extends Controller
 
     public function assessors()
     {
-        $assessors = User::query()
-            ->whereHas('roles', fn($q) => $q->where('name', 'assessor'))
-            ->with('assessor')
-            ->get();
-
         return response()->json([
             'success' => true,
-            'data' => $assessors,
+            'data'=> $this->staffSubmissionService
+                  ->getAssessors(),
         ]);
     }
 
@@ -63,6 +58,22 @@ class SubmissionController extends Controller
                     $application
                 ),
         ]);
+    }
+
+    /*
+    | Download Document
+    */
+
+    public function downloadDocument(
+        int $application,
+        int $document
+    )
+    {
+        return $this->staffSubmissionService
+            ->downloadDocument(
+                $application,
+                $document
+            );
     }
 
     /*
