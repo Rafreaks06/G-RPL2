@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Assessor extends Model
 {
@@ -22,5 +23,13 @@ class Assessor extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    //Assessment Relation
+    public function assessments(): HasMany
+    {
+        return $this->hasMany(
+            Assessment::class
+        );
     }
 }
