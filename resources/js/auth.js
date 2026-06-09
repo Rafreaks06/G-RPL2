@@ -84,6 +84,20 @@ export async function hydrateAuthenticatedPage() {
         }
 
         revealProtectedShell();
+
+        const flash = localStorage.getItem('grpl2_flash');
+        if (flash) {
+            localStorage.removeItem('grpl2_flash');
+            const { icon, title, text } = JSON.parse(flash);
+            await Swal.fire({
+                icon,
+                title,
+                text,
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false,
+            });
+        }
     } catch (error) {
         clearSession();
         redirectToLogin();
@@ -120,6 +134,13 @@ export function bindAuthForms() {
                     }
 
                     storeSession(response.token, response.user);
+
+                    const userName = response.user?.name || 'Pengguna';
+                    localStorage.setItem('grpl2_flash', JSON.stringify({
+                        icon: 'success',
+                        title: 'Login Berhasil',
+                        text: `Selamat datang, ${userName}!`,
+                    }));
 
                     const roleRedirect = {
                         system_admin: '/dashboard',
