@@ -4,6 +4,7 @@ import {
     escapeHtml, collection, currentResourceId, setMessage, validationMessage,
     pageMessage, formPayload, toBoolean
 } from './utils.js';
+import Swal from 'sweetalert2';
 
 async function loadUsers() {
     const form = document.querySelector('[data-admin-filter="users"]');
@@ -98,7 +99,19 @@ function bindUserForms() {
                 setMessage(form, response.message || 'User tersimpan.', 'success');
 
                 if (mode === 'create') {
+                    localStorage.setItem('grpl2_flash', JSON.stringify({
+                        icon: 'success',
+                        title: 'User Berhasil Ditambahkan',
+                        text: response.message || 'User baru berhasil disimpan.',
+                    }));
                     window.location.assign('/admin/users');
+                } else {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'User Berhasil Diperbarui',
+                        text: response.message || 'Data user berhasil diperbarui.',
+                        confirmButtonText: 'Oke',
+                    });
                 }
             } catch (error) {
                 setMessage(form, validationMessage(error));
@@ -227,7 +240,19 @@ function bindStudyProgramForms() {
                 setMessage(form, response.message || 'Program studi tersimpan.', 'success');
 
                 if (mode === 'create') {
+                    localStorage.setItem('grpl2_flash', JSON.stringify({
+                        icon: 'success',
+                        title: 'Program Studi Berhasil Ditambahkan',
+                        text: response.message || 'Program studi baru berhasil disimpan.',
+                    }));
                     window.location.assign('/admin/study-programs');
+                } else {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Program Studi Berhasil Diperbarui',
+                        text: response.message || 'Data program studi berhasil diperbarui.',
+                        confirmButtonText: 'Oke',
+                    });
                 }
             } catch (error) {
                 setMessage(form, validationMessage(error));
@@ -336,7 +361,19 @@ function bindCourseForms() {
                 setMessage(form, response.message || 'Mata kuliah tersimpan.', 'success');
 
                 if (mode === 'create') {
+                    localStorage.setItem('grpl2_flash', JSON.stringify({
+                        icon: 'success',
+                        title: 'Mata Kuliah Berhasil Ditambahkan',
+                        text: response.message || 'Mata kuliah baru berhasil disimpan.',
+                    }));
                     window.location.assign('/admin/courses');
+                } else {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Mata Kuliah Berhasil Diperbarui',
+                        text: response.message || 'Data mata kuliah berhasil diperbarui.',
+                        confirmButtonText: 'Oke',
+                    });
                 }
             } catch (error) {
                 setMessage(form, validationMessage(error));
