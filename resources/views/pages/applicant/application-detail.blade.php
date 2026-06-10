@@ -89,6 +89,22 @@
 
             <div data-page-message></div>
 
+            {{-- REVIEW NOTES (only shown when returned) --}}
+            <div class="application-detail-review-notes" data-review-notes-section hidden>
+                <div class="application-detail-review-notes-header">
+                    <span class="application-detail-review-notes-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm1 15h-2v-6h2v6Zm0-8h-2V7h2v2Z"/>
+                        </svg>
+                    </span>
+                    <div>
+                        <p class="eyebrow application-detail-eyebrow">Catatan Pengembalian</p>
+                        <h3>Aplikasi Anda dikembalikan oleh Staff RPL</h3>
+                    </div>
+                </div>
+                <p data-review-notes-text class="application-detail-review-notes-text"></p>
+            </div>
+
             {{-- CONTROL PANEL --}}
             <div class="application-detail-control-card">
                 <div class="application-detail-control-head">
@@ -577,6 +593,62 @@
         border-radius: 999px;
         background: #2563eb;
         box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+    }
+
+    .application-detail-review-notes {
+    padding: 20px 24px;
+    border-radius: 28px;
+    border: 1px solid rgba(229, 57, 53, 0.22);
+    background:
+        radial-gradient(circle at 6% 0%, rgba(229, 57, 53, 0.07), transparent 30%),
+        linear-gradient(135deg, #fff8f8, #fff5f5);
+    box-shadow: 0 14px 36px rgba(229, 57, 53, 0.07);
+}
+
+    .application-detail-review-notes-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    .application-detail-review-notes-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        color: #E53935;
+        background: rgba(229, 57, 53, 0.10);
+    }
+
+    .application-detail-review-notes-icon svg {
+        width: 22px;
+        height: 22px;
+        fill: currentColor;
+    }
+
+    .application-detail-review-notes-header h3 {
+        margin: 6px 0 0;
+        color: #b91c1c;
+        font-family: 'Sora', system-ui, sans-serif;
+        font-size: 1rem;
+        font-weight: 950;
+        letter-spacing: -0.03em;
+    }
+
+    .application-detail-review-notes-text {
+        margin: 0;
+        padding: 14px 16px;
+        border-radius: 16px;
+        border: 1px solid rgba(229, 57, 53, 0.14);
+        background: rgba(255, 255, 255, 0.8);
+        color: #334155;
+        font-size: 0.9rem;
+        font-weight: 700;
+        line-height: 1.65;
+        white-space: pre-wrap;
     }
 
     .connection-pill.is-connected {

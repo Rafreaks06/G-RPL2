@@ -51,10 +51,6 @@
                     <span class="detail-value" data-detail-assessor>-</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Catatan Review</span>
-                    <span class="detail-value" data-detail-review-notes>-</span>
-                </div>
-                <div class="detail-item">
                     <span class="detail-label">Diajukan</span>
                     <span class="detail-value" data-detail-submitted-at>-</span>
                 </div>
