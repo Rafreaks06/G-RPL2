@@ -17,7 +17,7 @@
             <div class="application-create-hero">
                 <div class="application-create-hero-main">
                     <div>
-                        <p class="eyebrow application-create-eyebrow">New Application</p>
+                        <p class="eyebrow application-create-eyebrow">Pengajuan Baru</p>
 
                         <h2>Buat Pengajuan RPL</h2>
 
@@ -76,7 +76,7 @@
             <div class="application-create-card">
                 <div class="application-create-card-head">
                     <div>
-                        <p class="eyebrow application-create-eyebrow">Application Setup</p>
+                        <p class="eyebrow application-create-eyebrow">Pengaturan Pengajuan</p>
                         <h3>Pilih tipe rekognisi</h3>
                         <p>
                             Pastikan pilihan Anda sudah benar karena tipe rekognisi menentukan data apa saja
@@ -85,7 +85,7 @@
                     </div>
 
                     <span class="application-create-badge">
-                        Applicant Area
+                        Area Pelamar
                     </span>
                 </div>
 

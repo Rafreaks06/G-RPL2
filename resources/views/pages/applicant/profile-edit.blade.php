@@ -17,7 +17,7 @@
             <div class="profile-edit-hero">
                 <div class="profile-edit-hero-main">
                     <div>
-                        <p class="eyebrow profile-edit-eyebrow">Edit Profile</p>
+                        <p class="eyebrow profile-edit-eyebrow">Edit Profil</p>
 
                         <h2>Lengkapi Data Profil</h2>
 
@@ -49,8 +49,8 @@
             <form class="profile-edit-card profile-form" data-profile-form>
                 <div class="profile-edit-card-head">
                     <div>
-                        <p class="eyebrow profile-edit-eyebrow">Applicant Profile</p>
-                        <h3>Data utama applicant</h3>
+                        <p class="eyebrow profile-edit-eyebrow">Profil Pelamar</p>
+                        <h3>Data utama pelamar</h3>
                         <p>
                             Isi data dengan benar. Data profil akan digunakan untuk proses validasi pengajuan RPL.
                         </p>

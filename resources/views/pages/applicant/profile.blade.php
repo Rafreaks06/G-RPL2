@@ -17,13 +17,13 @@
             <div class="profile-page-hero">
                 <div class="profile-page-hero-content">
                     <div>
-                        <p class="eyebrow profile-page-eyebrow">Personal Information</p>
+                        <p class="eyebrow profile-page-eyebrow">Data Diri</p>
 
                         <h2>Data Profil</h2>
 
                         <p class="profile-page-subtitle">
                             Pastikan data profil Anda lengkap sebelum membuat atau mengirim pengajuan RPL.
-                            Data ini akan digunakan untuk kebutuhan validasi applicant.
+                            Data ini akan digunakan untuk kebutuhan validasi pelamar.
                         </p>
                     </div>
 
@@ -88,14 +88,14 @@
             <div class="profile-page-panel">
                 <div class="profile-page-panel-head">
                     <div>
-                        <h3>Ringkasan Profil</h3>
+                        <h3>                        Ringkasan Profil</h3>
                         <p>
-                            Data applicant yang terhubung dengan akun Anda. Lengkapi bagian yang masih kosong
+                            Data pelamar yang terhubung dengan akun Anda. Lengkapi bagian yang masih kosong
                             supaya proses pengajuan RPL berjalan lebih lancar.
                         </p>
                     </div>
 
-                    <span class="profile-page-panel-badge">Applicant Area</span>
+                    <span class="profile-page-panel-badge">Area Pelamar</span>
                 </div>
 
                 <p class="form-message profile-page-message" data-page-message aria-live="polite"></p>

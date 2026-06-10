@@ -3,6 +3,7 @@
 use Symfony\Component\HttpFoundation\Response;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -54,6 +55,22 @@ return Application::configure(
 
                 'message' => 'Access Forbidden'
             ], Response::HTTP_FORBIDDEN);
+        });
+
+        $exceptions->render(function (
+            QueryException $e,
+            $request
+        ) {
+
+            if (! $request->expectsJson() && ! $request->is('api/*')) {
+                return null;
+            }
+
+            return response()->json([
+                'success' => false,
+
+                'message' => 'Terjadi kesalahan pada server. Silakan coba beberapa saat lagi.'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         });
     })
 

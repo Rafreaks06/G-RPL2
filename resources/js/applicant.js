@@ -4,6 +4,7 @@ import {
     pageMessage, getApplicationTypeLabel, getApplicationStatusLabel,
     allowedApplicationSections, syncApplicationSections, formPayload, activateTab
 } from './utils.js';
+import Swal from 'sweetalert2';
 
 const profileLabels = {
     gender: {
@@ -143,12 +144,16 @@ function bindCreateApplication() {
         const rplType = form.querySelector('[name="rpl_type"]')?.value;
 
         if (!studyProgramId || !rplType) {
-            setMessage(form, 'Silakan isi semua field', 'error');
+            await Swal.fire({
+                icon: 'warning',
+                title: 'Perhatian',
+                text: 'Silakan isi semua field.',
+                confirmButtonText: 'Oke',
+            });
             return;
         }
 
         button.disabled = true;
-        setMessage(form, 'Membuat aplikasi...', 'info');
 
         try {
             const path = rplType === 'hybrid'
@@ -163,13 +168,23 @@ function bindCreateApplication() {
                 })
             });
 
-            setMessage(form, response.message || 'Aplikasi berhasil dibuat', 'success');
+            await Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: response.message || 'Aplikasi berhasil dibuat.',
+                timer: 1500,
+                showConfirmButton: false,
+            });
 
-            setTimeout(() => {
-                window.location.assign(`/applications/${response.data.id}`);
-            }, 1000);
+            window.location.assign(`/applications/${response.data.id}`);
         } catch (error) {
-            setMessage(form, validationMessage(error), 'error');
+            console.error('[Create Application]', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: validationMessage(error),
+                confirmButtonText: 'Tutup',
+            });
             button.disabled = false;
         }
     });
@@ -354,7 +369,13 @@ function bindDocumentDownload(applicationId) {
                 button.dataset.fileName || 'document'
             );
         } catch (error) {
-            safePageMessage(validationMessage(error), 'error');
+            console.error('[Download Document]', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: validationMessage(error),
+                confirmButtonText: 'Tutup',
+            });
         } finally {
             button.disabled = false;
         }
@@ -379,7 +400,6 @@ function bindDocumentUpload(applicationId) {
         formData.append('application_id', applicationId);
 
         button.disabled = true;
-        setMessage(form, 'Mengupload...', 'info');
 
         try {
             const response = await apiRequest(`/applicant/applications/${applicationId}/documents`, {
@@ -387,11 +407,23 @@ function bindDocumentUpload(applicationId) {
                 body: formData
             });
 
-            setMessage(form, response.message || 'Dokumen berhasil diupload', 'success');
+            await Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: response.message || 'Dokumen berhasil diunggah.',
+                timer: 1500,
+                showConfirmButton: false,
+            });
             form.reset();
             loadDocuments(applicationId);
         } catch (error) {
-            setMessage(form, validationMessage(error), 'error');
+            console.error('[Upload Document]', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: validationMessage(error),
+                confirmButtonText: 'Tutup',
+            });
         } finally {
             button.disabled = false;
         }
@@ -399,7 +431,17 @@ function bindDocumentUpload(applicationId) {
 }
 
 async function submitApplication(applicationId) {
-    if (!confirm('Submit aplikasi ini? Tidak dapat diubah setelah submit.')) {
+    const confirm = await Swal.fire({
+        icon: 'warning',
+        title: 'Submit Aplikasi?',
+        text: 'Aplikasi ini akan disubmit. Tidak dapat diubah setelah submit.',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Submit',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#1565C0',
+    });
+
+    if (!confirm.isConfirmed) {
         return;
     }
 
@@ -415,13 +457,23 @@ async function submitApplication(applicationId) {
             body: JSON.stringify({})
         });
 
-        safePageMessage(response.message || 'Aplikasi berhasil disubmit', 'success');
+        await Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: response.message || 'Aplikasi berhasil disubmit.',
+            timer: 1500,
+            showConfirmButton: false,
+        });
 
-        setTimeout(() => {
-            window.location.assign('/applications');
-        }, 1500);
+        window.location.assign('/applications');
     } catch (error) {
-        safePageMessage(validationMessage(error), 'error');
+        console.error('[Submit Application]', error);
+        await Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: validationMessage(error),
+            confirmButtonText: 'Tutup',
+        });
 
         if (button) {
             button.disabled = false;
@@ -620,21 +672,29 @@ function bindApplicantProfileForm() {
             button.disabled = true;
         }
 
-        setMessage(form, 'Menyimpan...', 'info');
-
         try {
             const response = await apiRequest('/applicant/profile', {
                 method: 'PUT',
                 body: JSON.stringify(payload),
             });
 
-            setMessage(form, response.message || 'Profil berhasil disimpan.', 'success');
+            await Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: response.message || 'Profil berhasil disimpan.',
+                timer: 1500,
+                showConfirmButton: false,
+            });
 
-            setTimeout(() => {
-                window.location.assign('/profile');
-            }, 1000);
+            window.location.assign('/profile');
         } catch (error) {
-            setMessage(form, validationMessage(error), 'error');
+            console.error('[Save Profile]', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: validationMessage(error),
+                confirmButtonText: 'Tutup',
+            });
         } finally {
             if (button) {
                 button.disabled = false;
@@ -673,10 +733,10 @@ function bindA1CourseModal() {
         delete form.dataset.courseId;
 
         if (title) {
-            title.textContent = 'Add A1 Course';
+            title.textContent = 'Tambah Mata Kuliah A1';
         }
 
-        saveButton.textContent = 'Save';
+        saveButton.textContent = 'Simpan';
         setMessage(form, '', 'info');
         modal.hidden = false;
     };
@@ -706,7 +766,7 @@ function bindA1CourseModal() {
         }
 
         if (title) {
-            title.textContent = 'Edit A1 Course';
+            title.textContent = 'Edit Mata Kuliah A1';
         }
 
         saveButton.textContent = 'Update';
@@ -743,7 +803,6 @@ function bindA1CourseModal() {
         const payload = formPayload(form);
 
         saveButton.disabled = true;
-        setMessage(form, 'Menyimpan...', 'info');
 
         try {
             const courseId = form.dataset.courseId;
@@ -758,16 +817,26 @@ function bindA1CourseModal() {
                 }
             );
 
-            setMessage(form, response.message || 'A1 course berhasil disimpan', 'success');
+            await Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: response.message || 'A1 course berhasil disimpan.',
+                timer: 1500,
+                showConfirmButton: false,
+            });
             form.reset();
             delete form.dataset.courseId;
 
-            setTimeout(() => {
-                modal.hidden = true;
-                loadA1Courses(applicationId);
-            }, 1000);
+            modal.hidden = true;
+            loadA1Courses(applicationId);
         } catch (error) {
-            setMessage(form, validationMessage(error), 'error');
+            console.error('[Save A1 Course]', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: validationMessage(error),
+                confirmButtonText: 'Tutup',
+            });
         } finally {
             saveButton.disabled = false;
         }
@@ -819,7 +888,6 @@ function bindA2ExperienceModal() {
         });
 
         saveButton.disabled = true;
-        setMessage(form, 'Menyimpan...', 'info');
 
         try {
             const response = await apiRequest(`/applicant/applications/${applicationId}/a2-learning-experiences`, {
@@ -827,15 +895,25 @@ function bindA2ExperienceModal() {
                 body: JSON.stringify(payload)
             });
 
-            setMessage(form, response.message || 'Learning experience berhasil ditambahkan', 'success');
+            await Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: response.message || 'Pengalaman pembelajaran berhasil ditambahkan.',
+                timer: 1500,
+                showConfirmButton: false,
+            });
             form.reset();
 
-            setTimeout(() => {
-                modal.hidden = true;
-                loadA2LearningExperiences(applicationId);
-            }, 1000);
+            modal.hidden = true;
+            loadA2LearningExperiences(applicationId);
         } catch (error) {
-            setMessage(form, validationMessage(error), 'error');
+            console.error('[Save A2 Experience]', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: validationMessage(error),
+                confirmButtonText: 'Tutup',
+            });
         } finally {
             saveButton.disabled = false;
         }

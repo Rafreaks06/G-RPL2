@@ -23,15 +23,45 @@ export function setMessage(form, message, type = 'error') {
 }
 
 export function validationMessage(error) {
+    const genericServerMessage = 'Terjadi kesalahan pada server. Silakan coba beberapa saat lagi.';
+    const genericNotFoundMessage = 'Data yang diminta tidak ditemukan.';
+    const technicalPattern = /(sqlstate|queryexception|pdoexception|integrity constraint|duplicate entry|base table|unknown column|column not found|stack trace|select .* from|insert into|update .* set|delete from)/i;
+
+    const sanitize = (message) => {
+        const text = String(message || '').trim();
+
+        if (!text) {
+            return '';
+        }
+
+        if (technicalPattern.test(text)) {
+            return genericServerMessage;
+        }
+
+        return text;
+    };
+
     const errors = error?.payload?.errors;
-    if (!errors) {
-        return error.message || 'Request failed';
+
+    if (errors) {
+        const message = Object.values(errors)
+            .flat()
+            .filter(Boolean)
+            .map(sanitize)
+            .find(Boolean);
+
+        return message || genericServerMessage;
     }
 
-    return Object.values(errors)
-        .flat()
-        .filter(Boolean)
-        .join(' ');
+    if (error?.status >= 500) {
+        return genericServerMessage;
+    }
+
+    if (error?.status === 404) {
+        return genericNotFoundMessage;
+    }
+
+    return sanitize(error?.message) || 'Permintaan gagal';
 }
 
 export function pageMessage(message, type = 'error') {
@@ -81,13 +111,13 @@ export function getApplicationTypeLabel(type) {
 export function getApplicationStatusLabel(status) {
     const labels = {
         'draft': 'Draft',
-        'submitted': 'Submitted',
-        'under_review': 'Under Review',
-        'returned': 'Returned',
-        'under_assessment': 'Under Assessment',
-        'assessed': 'Assessed',
-        'approved': 'Approved',
-        'rejected': 'Rejected'
+        'submitted': 'Dikirim',
+        'under_review': 'Dalam Tinjauan',
+        'returned': 'Dikembalikan',
+        'under_assessment': 'Dalam Penilaian',
+        'assessed': 'Dinilai',
+        'approved': 'Disetujui',
+        'rejected': 'Ditolak'
     };
     return labels[status] || status;
 }

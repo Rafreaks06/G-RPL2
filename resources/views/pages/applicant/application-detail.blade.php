@@ -54,7 +54,7 @@
                         </span>
 
                         <div>
-                            <p>A1 Courses</p>
+                            <p>Mata Kuliah A1</p>
                             <strong data-detail-a1-total>—</strong>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
                         </span>
 
                         <div>
-                            <p>A2 Experiences</p>
+                            <p>Pengalaman A2</p>
                             <strong data-detail-a2-total>—</strong>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                         </span>
 
                         <div>
-                            <p>Documents</p>
+                            <p>Dokumen</p>
                             <strong data-detail-document-total>—</strong>
                         </div>
                     </div>
@@ -135,7 +135,7 @@
                                 <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6Zm-1 7V3.5L18.5 9H13Z"/>
                             </svg>
                         </span>
-                        <span>Documents</span>
+                        <span>Dokumen</span>
                     </button>
                     
                 </div>
@@ -151,7 +151,7 @@
                         </div>
 
                         <span class="application-detail-soft-badge">
-                            A1 Course List
+                            A1 Daftar Mata Kuliah
                         </span>
                     </div>
 
@@ -194,7 +194,7 @@
                         </div>
 
                         <span class="application-detail-soft-badge">
-                            A2 Experience List
+                            A2 Daftar Pengalaman
                         </span>
                     </div>
 
@@ -280,7 +280,7 @@
                             <div class="application-detail-form-message" data-form-message></div>
 
                             <button class="application-detail-upload-btn" type="button" data-upload-document>
-                                Upload Document
+                                Upload Dokumen
                             </button>
                         </form>
                     </div>
@@ -293,7 +293,7 @@
                             </div>
 
                             <span class="application-detail-soft-badge">
-                                Document List
+                                Daftar Dokumen
                             </span>
                         </div>
 
@@ -339,8 +339,8 @@
         <div class="modal-content application-detail-modal-content">
             <div class="modal-header application-detail-modal-header">
                 <div>
-                    <p class="eyebrow application-detail-eyebrow">A1 - Course</p>
-                    <h3 data-a1-course-modal-title>Add A1 Course</h3>
+                    <p class="eyebrow application-detail-eyebrow">A1 - Mata Kuliah</p>
+                    <h3 data-a1-course-modal-title>Tambah Mata Kuliah A1</h3>
                 </div>
 
                 <button type="button" class="modal-close application-detail-modal-close" data-close-modal="a1-course">
@@ -387,11 +387,11 @@
 
                 <div class="modal-actions application-detail-modal-actions">
                     <button type="button" class="application-detail-muted-btn" data-close-modal="a1-course">
-                        Cancel
+                        Batal
                     </button>
 
                     <button type="button" class="application-detail-upload-btn" data-save-a1-course>
-                        Save
+                        Simpan
                     </button>
                 </div>
             </form>
@@ -403,8 +403,8 @@
         <div class="modal-content application-detail-modal-content">
             <div class="modal-header application-detail-modal-header">
                 <div>
-                    <p class="eyebrow application-detail-eyebrow">A2 - Experience</p>
-                    <h3>Add Learning Experience</h3>
+                    <p class="eyebrow application-detail-eyebrow">A2 - Pengalaman</p>
+                    <h3>Tambah Pengalaman Pembelajaran</h3>
                 </div>
 
                 <button type="button" class="modal-close application-detail-modal-close" data-close-modal="a2-experience">
@@ -459,11 +459,11 @@
 
                 <div class="modal-actions application-detail-modal-actions">
                     <button type="button" class="application-detail-muted-btn" data-close-modal="a2-experience">
-                        Cancel
+                        Batal
                     </button>
 
                     <button type="button" class="application-detail-upload-btn" data-save-a2-experience>
-                        Save
+                        Simpan
                     </button>
                 </div>
             </form>

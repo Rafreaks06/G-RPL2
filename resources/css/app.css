@@ -859,6 +859,10 @@ textarea:focus {
     backdrop-filter: blur(6px);
 }
 
+.swal2-container {
+    z-index: 20000 !important;
+}
+
 .modal-content {
     width: min(560px, calc(100% - 36px));
     max-height: calc(100vh - 80px);
