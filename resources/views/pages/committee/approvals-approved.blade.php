@@ -559,49 +559,28 @@
         font-weight: 850;
     }
 
-    .status-badge {
-        min-height: 28px;
+    .approved-badge {
+        min-height: 34px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0 10px;
+        padding: 0 14px;
         border-radius: 999px;
-        color: #1d4ed8;
-        background: #dbeafe;
-        border: 1px solid rgba(37, 99, 235, .18);
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 950;
         white-space: nowrap;
     }
 
-    .status-badge[data-status="approved"],
-    .status-badge[data-status="assessed"],
-    .status-badge[data-status="active"] {
+    .approved-badge.yes {
         color: #047857;
         background: #d1fae5;
-        border-color: rgba(16, 185, 129, .24);
+        border: 1px solid rgba(16, 185, 129, .24);
     }
 
-    .status-badge[data-status="pending"],
-    .status-badge[data-status="submitted"],
-    .status-badge[data-status="under_review"] {
-        color: #1d4ed8;
-        background: #dbeafe;
-        border-color: rgba(37, 99, 235, .18);
-    }
-
-    .status-badge[data-status="rejected"],
-    .status-badge[data-status="returned"] {
+    .approved-badge.no {
         color: #b91c1c;
         background: #fee2e2;
-        border-color: rgba(239, 68, 68, .25);
-    }
-
-    .table-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
+        border: 1px solid rgba(239, 68, 68, .25);
     }
 
     .button,
@@ -763,11 +742,8 @@
 </style>
 
 <section class="committee-shell app-shell" data-protected-shell hidden>
-
-    {{-- Sidebar Committee Manual --}}
     <x-committee-sidebar />
 
-    {{-- Main Workspace --}}
     <div class="committee-workspace workspace">
         <div class="committee-container">
 
@@ -838,13 +814,11 @@
                                 <h3>Ringkasan Approved Applications</h3>
                                 <p>
                                     Semua aplikasi yang sudah disetujui akan tampil pada tabel di bawah.
-                                    Gunakan search bar untuk mencari nomor aplikasi, pemohon, program studi, total SKS, catatan, atau tanggal approval.
+                                    Gunakan search bar untuk mencari nomor aplikasi, pemohon, program studi, total SKS, catatan, atau status approval.
                                 </p>
                             </div>
 
-                            <span class="committee-mini-badge">
-                                Approved List
-                            </span>
+                            <span class="committee-mini-badge">Approved List</span>
                         </div>
                     </section>
 
@@ -935,15 +909,6 @@
             }
 
             if (
-                text.includes('connecting') ||
-                text.includes('loading') ||
-                text.includes('memuat')
-            ) {
-                apiStatus.classList.add('is-connecting');
-                return;
-            }
-
-            if (
                 text.includes('error') ||
                 text.includes('failed') ||
                 text.includes('offline') ||
@@ -974,6 +939,114 @@
                 text.includes('no data') ||
                 text.includes('empty')
             );
+        }
+
+        function isDetailElement(element) {
+            if (!element) return false;
+
+            const text = normalizeText(element.textContent);
+            const href = element.getAttribute ? String(element.getAttribute('href') || '') : '';
+
+            return text.includes('detail') || href.includes('/approvals/');
+        }
+
+        function makeBadgeYes() {
+            const badge = document.createElement('span');
+            badge.className = 'approved-badge yes';
+            badge.textContent = 'Iya';
+            return badge;
+        }
+
+        function makeDash() {
+            const span = document.createElement('span');
+            span.textContent = '-';
+            span.style.color = '#94a3b8';
+            span.style.fontWeight = '900';
+            return span;
+        }
+
+        function fixApprovedRowsOnce() {
+            if (!approvedBody) return;
+
+            const rows = Array.from(approvedBody.querySelectorAll('tr'));
+
+            rows.forEach(function (row) {
+                if (row.dataset.fixedApproved === 'true') return;
+                if (row.hasAttribute('data-search-empty-row')) return;
+                if (isUtilityRow(row)) return;
+
+                const cells = Array.from(row.children);
+
+                if (cells.length === 6) {
+                    const detail =
+                        Array.from(cells[5].querySelectorAll('a, button')).find(isDetailElement) ||
+                        Array.from(row.querySelectorAll('a, button')).find(isDetailElement);
+
+                    const catatanCell = document.createElement('td');
+                    catatanCell.textContent = '-';
+
+                    const disetujuiCell = document.createElement('td');
+                    disetujuiCell.appendChild(makeBadgeYes());
+
+                    const aksiCell = document.createElement('td');
+
+                    if (detail) {
+                        aksiCell.appendChild(detail);
+                    } else {
+                        aksiCell.appendChild(makeDash());
+                    }
+
+                    cells[4].replaceWith(catatanCell);
+                    cells[5].replaceWith(disetujuiCell);
+                    row.appendChild(aksiCell);
+
+                    row.dataset.fixedApproved = 'true';
+                    return;
+                }
+
+                if (cells.length >= 7) {
+                    const catatanCell = cells[4];
+                    const disetujuiCell = cells[5];
+                    const aksiCell = cells[6];
+
+                    const detailInDisetujui =
+                        Array.from(disetujuiCell.querySelectorAll('a, button')).find(isDetailElement);
+
+                    const detailAnywhere =
+                        Array.from(row.querySelectorAll('a, button')).find(isDetailElement);
+
+                    if (detailInDisetujui) {
+                        aksiCell.innerHTML = '';
+                        aksiCell.appendChild(detailInDisetujui);
+                    } else if (detailAnywhere && !aksiCell.querySelector('a, button')) {
+                        aksiCell.innerHTML = '';
+                        aksiCell.appendChild(detailAnywhere);
+                    }
+
+                    disetujuiCell.innerHTML = '';
+                    disetujuiCell.appendChild(makeBadgeYes());
+
+                    const catatanText = normalizeText(catatanCell.textContent);
+
+                    if (
+                        !catatanText ||
+                        catatanText === 'null' ||
+                        catatanText === 'undefined' ||
+                        catatanText.includes('detail') ||
+                        /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(catatanText) ||
+                        /^\d{4}-\d{1,2}-\d{1,2}$/.test(catatanText)
+                    ) {
+                        catatanCell.textContent = '-';
+                    }
+
+                    if (!aksiCell.querySelector('a, button')) {
+                        aksiCell.innerHTML = '';
+                        aksiCell.appendChild(makeDash());
+                    }
+
+                    row.dataset.fixedApproved = 'true';
+                }
+            });
         }
 
         function getDataRows() {
@@ -1023,21 +1096,14 @@
         }
 
         function filterApprovedTable() {
-            if (!approvedBody || !searchInput) {
-                updateTotalRows();
+            if (!approvedBody) {
                 return;
             }
 
-            const query = normalizeText(searchInput.value);
+            const query = searchInput ? normalizeText(searchInput.value) : '';
             const dataRows = getDataRows();
 
             updateTotalRows();
-
-            Array.from(approvedBody.querySelectorAll('tr')).forEach(function (row) {
-                if (isUtilityRow(row)) {
-                    row.hidden = false;
-                }
-            });
 
             if (!dataRows.length) {
                 removeSearchEmptyRow();
@@ -1083,37 +1149,38 @@
             }
         }
 
+        function runSafeFix() {
+            fixApprovedRowsOnce();
+            updateTotalRows();
+            filterApprovedTable();
+        }
+
+        refreshApiStatusClass();
+
         if (apiStatus) {
             const statusObserver = new MutationObserver(refreshApiStatusClass);
-
             statusObserver.observe(apiStatus, {
                 childList: true,
                 subtree: true,
                 characterData: true
             });
-
-            refreshApiStatusClass();
         }
 
         if (searchInput) {
             searchInput.addEventListener('input', filterApprovedTable);
         }
 
-        if (approvedBody) {
-            const tableObserver = new MutationObserver(function () {
-                updateTotalRows();
-                filterApprovedTable();
-            });
+        let tries = 0;
+        const interval = setInterval(function () {
+            tries += 1;
+            runSafeFix();
 
-            tableObserver.observe(approvedBody, {
-                childList: true,
-                subtree: true,
-                characterData: true
-            });
+            if (tries >= 12) {
+                clearInterval(interval);
+            }
+        }, 400);
 
-            updateTotalRows();
-            filterApprovedTable();
-        }
+        runSafeFix();
     });
 </script>
 @endsection
