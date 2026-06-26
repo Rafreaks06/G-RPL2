@@ -434,6 +434,7 @@ function bindAssessorActions() {
         const sources = isA1 ? assessmentState.a1Courses : assessmentState.a2Experiences;
         const labelKey = isA1 ? 'course_name' : 'title';
         const idAttr = isA1 ? 'course_code' : 'experience_type';
+
         const usedSourceIds = isA1 ? assessmentState.usedA1SourceIds : assessmentState.usedA2SourceIds;
         const availableSources = sources.filter(s => !usedSourceIds.has(String(s.id)));
 
@@ -458,7 +459,8 @@ function bindAssessorActions() {
                 : '<option value="">Semua sumber sudah mapping</option>';
         };
 
-        const renderCourseOptions = (courses) => {
+        // A1: dropdown biasa, exclude used target courses
+        const renderCourseOptionsDropdown = (courses) => {
             const courseSelect = document.getElementById('swal-mapping-course');
             if (!courseSelect) return;
             const filtered = courses.filter(c => !assessmentState.usedTargetCourseIds.has(String(c.id)));
@@ -470,9 +472,65 @@ function bindAssessorActions() {
                 : '<option value="">Tidak ada course tersedia</option>';
         };
 
+        // A2: checkbox list di dalam dropdown panel
+        const renderCourseCheckboxes = (courses) => {
+            const container = document.getElementById('swal-course-checkbox-list');
+            if (!container) return;
+            const filtered = courses.filter(c => !assessmentState.usedTargetCourseIds.has(String(c.id)));
+            container.innerHTML = filtered.length
+                ? filtered.map(c => `
+                <label class="sm-checkbox-item">
+                    <input type="checkbox" class="sm-course-checkbox" value="${c.id}">
+                    <span class="sm-checkbox-label">
+                        <span class="sm-checkbox-code">${escapeHtml(c.code || '')}</span>
+                        ${escapeHtml(c.name)}
+                        <span class="sm-checkbox-meta">Sem ${escapeHtml(String(c.semester))} · ${escapeHtml(String(c.sks))} SKS</span>
+                    </span>
+                </label>
+            `).join('')
+                : '<p class="sm-empty-courses">Tidak ada course tersedia</p>';
+
+            // Re-bind tag update setelah list di-render ulang
+            syncMultiSelectTags();
+            container.removeEventListener('change', syncMultiSelectTags);
+            container.addEventListener('change', syncMultiSelectTags);
+        };
+
+        // Sync tags pada trigger A2 multi-select
+        const syncMultiSelectTags = () => {
+            const msTags = document.getElementById('sm-ms-tags');
+            if (!msTags) return;
+            const checked = [...document.querySelectorAll('.sm-course-checkbox:checked')];
+            msTags.innerHTML = '';
+            if (!checked.length) {
+                msTags.innerHTML = '<span class="sm-ms-placeholder">— Pilih Mata Kuliah Tujuan —</span>';
+                return;
+            }
+            checked.forEach(cb => {
+                const itemLabel = cb.closest('.sm-checkbox-item')?.querySelector('.sm-checkbox-label');
+                const code = itemLabel?.querySelector('.sm-checkbox-code')?.textContent?.trim() || '';
+                const name = itemLabel
+                    ? [...itemLabel.childNodes]
+                        .filter(n => n.nodeType === 3 && n.textContent.trim())
+                        .map(n => n.textContent.trim())
+                        .join('') || ''
+                    : cb.value;
+                const tag = document.createElement('span');
+                tag.className = 'sm-ms-tag';
+                tag.dataset.val = cb.value;
+                tag.innerHTML = `${escapeHtml(code)} ${escapeHtml(name)}<span class="sm-ms-tag-x" data-val="${cb.value}" aria-label="Hapus">×</span>`;
+                msTags.appendChild(tag);
+            });
+        };
+
         const fetchCourses = (studyProgramId, semester) => {
-            const courseSelect = document.getElementById('swal-mapping-course');
-            if (courseSelect) courseSelect.innerHTML = '<option value="">Memuat course...</option>';
+            if (isA1) {
+                const courseSelect = document.getElementById('swal-mapping-course');
+                if (courseSelect) courseSelect.innerHTML = '<option value="">Memuat course...</option>';
+            } else {
+                const container = document.getElementById('swal-course-checkbox-list');
+                if (container) container.innerHTML = '<p class="sm-empty-courses">Memuat course...</p>';
+            }
 
             const params = new URLSearchParams();
             if (studyProgramId) params.set('study_program_id', studyProgramId);
@@ -480,137 +538,305 @@ function bindAssessorActions() {
 
             const url = '/courses' + (params.toString() ? '?' + params.toString() : '');
             apiRequest(url)
-                .then(response => { allCourses = collection(response); renderCourseOptions(allCourses); })
-                .catch(() => { if (courseSelect) courseSelect.innerHTML = '<option value="">Gagal memuat course</option>'; });
+                .then(response => {
+                    allCourses = collection(response);
+                    if (isA1) {
+                        renderCourseOptionsDropdown(allCourses);
+                    } else {
+                        renderCourseCheckboxes(allCourses);
+                    }
+                })
+                .catch(() => {
+                    if (isA1) {
+                        const courseSelect = document.getElementById('swal-mapping-course');
+                        if (courseSelect) courseSelect.innerHTML = '<option value="">Gagal memuat course</option>';
+                    } else {
+                        const container = document.getElementById('swal-course-checkbox-list');
+                        if (container) container.innerHTML = '<p class="sm-empty-courses">Gagal memuat course</p>';
+                    }
+                });
         };
+
+        // HTML field A1: dropdown biasa (tidak berubah)
+        // HTML field A2: trigger + panel dropdown multi-select
+        const courseFieldHtml = isA1
+            ? `<div class="sm-field" id="swal-mapping-course-wrapper" style="display:none;">
+                <label class="sm-label">Mata Kuliah Tujuan</label>
+                <select id="swal-mapping-course" class="sm-select">
+                    <option value="">— Pilih Mata Kuliah Tujuan —</option>
+                </select>
+              </div>`
+            : `<div class="sm-field" id="swal-mapping-course-wrapper" style="display:none;">
+                <label class="sm-label">Mata Kuliah Tujuan <span style="font-weight:400;color:#94a3b8;">(pilih satu atau lebih)</span></label>
+                <div id="sm-ms-trigger" class="sm-ms-trigger" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
+                    <div class="sm-ms-tags" id="sm-ms-tags">
+                        <span class="sm-ms-placeholder">— Pilih Mata Kuliah Tujuan —</span>
+                    </div>
+                    <span class="sm-ms-chevron" id="sm-ms-chevron" aria-hidden="true">▾</span>
+                </div>
+                <div class="sm-ms-panel" id="sm-ms-panel" role="listbox">
+                    <input type="text" id="sm-ms-search" class="sm-ms-search" placeholder="Cari mata kuliah...">
+                    <div id="swal-course-checkbox-list" class="sm-checkbox-list"></div>
+                </div>
+              </div>`;
 
         Swal.fire({
             title: modalTitle,
-            width: 460,
+            width: 480,
             padding: '1.25rem 1.5rem 1.5rem',
             customClass: { popup: 'swal-mapping-popup' },
             html: `
-                <style>
-                    .swal-mapping-popup { font-size: 14px !important; }
-                    .swal-mapping-popup .swal2-title {
-                        font-size: 17px !important;
-                        padding-bottom: 0 !important;
-                        margin-bottom: 0 !important;
-                    }
-                    .swal-mapping-popup .swal2-html-container {
-                        margin: 0.5rem 0 0 !important;
-                        padding: 0 !important;
-                        overflow: visible !important;
-                        text-align: left !important;
-                    }
+            <style>
+                .swal-mapping-popup { font-size: 14px !important; }
+                .swal-mapping-popup .swal2-title {
+                    font-size: 17px !important;
+                    padding-bottom: 0 !important;
+                    margin-bottom: 0 !important;
+                }
+                .swal-mapping-popup .swal2-html-container {
+                    margin: 0.5rem 0 0 !important;
+                    padding: 0 !important;
+                    overflow: visible !important;
+                    text-align: left !important;
+                }
+                .sm-badge {
+                    display: inline-block;
+                    background: ${accentBg};
+                    color: ${accentText};
+                    font-size: 11px;
+                    font-weight: 600;
+                    padding: 2px 10px;
+                    border-radius: 4px;
+                    margin-bottom: 12px;
+                }
+                .sm-field { margin-bottom: 10px; }
+                .sm-label {
+                    display: block;
+                    font-size: 12px;
+                    font-weight: 500;
+                    color: #64748b;
+                    margin-bottom: 3px;
+                }
+                .sm-row { display: flex; gap: 8px; }
+                .sm-row .sm-field { flex: 1; }
+                .sm-select, .sm-textarea {
+                    width: 100%;
+                    box-sizing: border-box;
+                    margin: 0 !important;
+                    font-family: inherit;
+                    font-size: 13px !important;
+                    padding: 6px 10px !important;
+                    border: 1px solid #e2e8f0 !important;
+                    border-radius: 6px !important;
+                    background: #fff !important;
+                    color: #1e293b !important;
+                    height: auto !important;
+                }
+                .sm-select:focus, .sm-textarea:focus {
+                    outline: none !important;
+                    border-color: ${accentColor} !important;
+                    box-shadow: 0 0 0 2px ${accentBg} !important;
+                }
+                .sm-chip-group { display: flex; gap: 6px; }
+                .sm-chip {
+                    flex: 1;
+                    padding: 6px 0;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 6px;
+                    background: #f8fafc;
+                    color: #64748b;
+                    font-size: 12px;
+                    font-weight: 500;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: all 0.15s;
+                    user-select: none;
+                }
+                .sm-chip:hover { border-color: #cbd5e1; background: #f1f5f9; }
+                .sm-chip.active {
+                    background: ${accentBg};
+                    border-color: ${accentColor};
+                    color: ${accentText};
+                }
 
-                    .sm-badge {
-                        display: inline-block;
-                        background: ${accentBg};
-                        color: ${accentText};
-                        font-size: 11px;
-                        font-weight: 600;
-                        padding: 2px 10px;
-                        border-radius: 4px;
-                        margin-bottom: 12px;
-                    }
-                    .sm-field { margin-bottom: 10px; }
-                    .sm-label {
-                        display: block;
-                        font-size: 12px;
-                        font-weight: 500;
-                        color: #64748b;
-                        margin-bottom: 3px;
-                    }
-                    .sm-row { display: flex; gap: 8px; }
-                    .sm-row .sm-field { flex: 1; }
-                    .sm-select, .sm-textarea {
-                        width: 100%;
-                        box-sizing: border-box;
-                        margin: 0 !important;
-                        font-family: inherit;
-                        font-size: 13px !important;
-                        padding: 6px 10px !important;
-                        border: 1px solid #e2e8f0 !important;
-                        border-radius: 6px !important;
-                        background: #fff !important;
-                        color: #1e293b !important;
-                        height: auto !important;
-                    }
-                    .sm-select:focus, .sm-textarea:focus {
-                        outline: none !important;
-                        border-color: ${accentColor} !important;
-                        box-shadow: 0 0 0 2px ${accentBg} !important;
-                    }
+                /* ── A2 Multi-select dropdown ── */
+                .sm-ms-trigger {
+                    display: flex;
+                    align-items: center;
+                    min-height: 34px;
+                    padding: 4px 8px 4px 10px;
+                    gap: 6px;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 6px;
+                    background: #fff;
+                    cursor: pointer;
+                    box-sizing: border-box;
+                    transition: border-color 0.15s, box-shadow 0.15s;
+                }
+                .sm-ms-trigger:hover { border-color: #cbd5e1; }
+                .sm-ms-trigger.open {
+                    border-color: ${accentColor};
+                    box-shadow: 0 0 0 2px ${accentBg};
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+                .sm-ms-tags {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 3px;
+                    flex: 1;
+                }
+                .sm-ms-placeholder {
+                    font-size: 13px;
+                    color: #94a3b8;
+                    line-height: 1.6;
+                }
+                .sm-ms-tag {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 3px;
+                    background: ${accentBg};
+                    color: ${accentText};
+                    font-size: 11px;
+                    font-weight: 500;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    line-height: 1.5;
+                    max-width: 180px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .sm-ms-tag-x {
+                    cursor: pointer;
+                    font-size: 12px;
+                    color: ${accentColor};
+                    flex-shrink: 0;
+                    line-height: 1;
+                    padding: 0 1px;
+                }
+                .sm-ms-tag-x:hover { color: ${accentText}; }
+                .sm-ms-chevron {
+                    font-size: 13px;
+                    color: #94a3b8;
+                    flex-shrink: 0;
+                    transition: transform 0.15s;
+                    user-select: none;
+                    line-height: 1;
+                }
+                .sm-ms-chevron.open { transform: rotate(180deg); }
+                .sm-ms-panel {
+                    border: 1px solid ${accentColor};
+                    border-top: none;
+                    border-bottom-left-radius: 6px;
+                    border-bottom-right-radius: 6px;
+                    background: #fff;
+                    display: none;
+                    overflow: hidden;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                }
+                .sm-ms-panel.open { display: block; }
+                .sm-ms-search {
+                    width: 100%;
+                    box-sizing: border-box;
+                    border: none;
+                    border-bottom: 1px solid #e2e8f0;
+                    padding: 6px 10px;
+                    font-size: 12px;
+                    background: #f8fafc;
+                    color: #1e293b;
+                    font-family: inherit;
+                }
+                .sm-ms-search:focus { outline: none; background: #fff; }
 
-                    /* Chip toggle untuk status pengakuan */
-                    .sm-chip-group { display: flex; gap: 6px; }
-                    .sm-chip {
-                        flex: 1;
-                        padding: 6px 0;
-                        border: 1px solid #e2e8f0;
-                        border-radius: 6px;
-                        background: #f8fafc;
-                        color: #64748b;
-                        font-size: 12px;
-                        font-weight: 500;
-                        text-align: center;
-                        cursor: pointer;
-                        transition: all 0.15s;
-                        user-select: none;
-                    }
-                    .sm-chip:hover { border-color: #cbd5e1; background: #f1f5f9; }
-                    .sm-chip.active {
-                        background: ${accentBg};
-                        border-color: ${accentColor};
-                        color: ${accentText};
-                    }
-                </style>
+                /* Checkbox list di dalam panel */
+                .sm-checkbox-list {
+                    max-height: 150px;
+                    overflow-y: auto;
+                    padding: 4px;
+                }
+                .sm-checkbox-item {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 8px;
+                    padding: 5px 8px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: background 0.1s;
+                }
+                .sm-checkbox-item:hover { background: ${accentBg}; }
+                .sm-course-checkbox {
+                    margin-top: 2px;
+                    flex-shrink: 0;
+                    accent-color: ${accentColor};
+                    width: 13px;
+                    height: 13px;
+                    cursor: pointer;
+                }
+                .sm-checkbox-label {
+                    font-size: 13px;
+                    color: #1e293b;
+                    line-height: 1.4;
+                    cursor: pointer;
+                }
+                .sm-checkbox-code {
+                    font-weight: 600;
+                    margin-right: 4px;
+                }
+                .sm-checkbox-meta {
+                    display: block;
+                    font-size: 11px;
+                    color: #94a3b8;
+                    margin-top: 1px;
+                }
+                .sm-empty-courses {
+                    font-size: 12px;
+                    color: #94a3b8;
+                    text-align: center;
+                    padding: 12px 0;
+                    margin: 0;
+                }
+            </style>
 
-                <div class="sm-badge">${escapeHtml(isA1 ? 'A1 · Mata Kuliah Sebelumnya' : 'A2 · Pengalaman Belajar')}</div>
+            <div class="sm-badge">${escapeHtml(isA1 ? 'A1 · Mata Kuliah Sebelumnya' : 'A2 · Pengalaman Belajar')}</div>
 
+            <div class="sm-field">
+                <label class="sm-label">${escapeHtml(sourceLabel)}</label>
+                <select id="swal-mapping-source" class="sm-select"></select>
+            </div>
+
+            <div class="sm-row" id="swal-filter-row" style="display:none;">
                 <div class="sm-field">
-                    <label class="sm-label">${escapeHtml(sourceLabel)}</label>
-                    <select id="swal-mapping-source" class="sm-select"></select>
-                </div>
-
-                <div class="sm-row" id="swal-filter-row" style="display:none;">
-                    <div class="sm-field">
-                        <label class="sm-label">Program Studi</label>
-                        <select id="swal-mapping-program" class="sm-select">
-                            <option value="">Memuat prodi...</option>
-                        </select>
-                    </div>
-                    <div class="sm-field">
-                        <label class="sm-label">Semester</label>
-                        <select id="swal-mapping-semester" class="sm-select">
-                            <option value="">Semua</option>
-                            ${[1, 2, 3, 4, 5, 6, 7, 8].map(s => `<option value="${s}">Sem ${s}</option>`).join('')}
-                        </select>
-                    </div>
-                </div>
-
-                <div class="sm-field">
-                    <label class="sm-label">Status Pengakuan</label>
-                    <div class="sm-chip-group">
-                        <div class="sm-chip active" id="chip-tidak" data-value="0">Tidak Diakui</div>
-                        <div class="sm-chip" id="chip-diakui" data-value="1">Diakui</div>
-                    </div>
-                    <input type="hidden" id="swal-mapping-recognized" value="0">
-                </div>
-
-                <div class="sm-field" id="swal-mapping-course-wrapper" style="display:none;">
-                    <label class="sm-label">Mata Kuliah Tujuan</label>
-                    <select id="swal-mapping-course" class="sm-select">
-                        <option value="">— Pilih Mata Kuliah Tujuan —</option>
+                    <label class="sm-label">Program Studi</label>
+                    <select id="swal-mapping-program" class="sm-select">
+                        <option value="">Memuat prodi...</option>
                     </select>
                 </div>
-
-                <div class="sm-field" style="margin-bottom:0;">
-                    <label class="sm-label">Catatan <span style="font-weight:400;">(opsional)</span></label>
-                    <textarea id="swal-mapping-notes" class="sm-textarea" style="height:60px;resize:none;" placeholder="Catatan tambahan..."></textarea>
+                <div class="sm-field">
+                    <label class="sm-label">Semester</label>
+                    <select id="swal-mapping-semester" class="sm-select">
+                        <option value="">Semua</option>
+                        ${[1, 2, 3, 4, 5, 6, 7, 8].map(s => `<option value="${s}">Sem ${s}</option>`).join('')}
+                    </select>
                 </div>
-            `,
+            </div>
+
+            <div class="sm-field">
+                <label class="sm-label">Status Pengakuan</label>
+                <div class="sm-chip-group">
+                    <div class="sm-chip active" id="chip-tidak" data-value="0">Tidak Diakui</div>
+                    <div class="sm-chip" id="chip-diakui" data-value="1">Diakui</div>
+                </div>
+                <input type="hidden" id="swal-mapping-recognized" value="0">
+            </div>
+
+            ${courseFieldHtml}
+
+            <div class="sm-field" style="margin-bottom:0;">
+                <label class="sm-label">Catatan <span style="font-weight:400;">(opsional)</span></label>
+                <textarea id="swal-mapping-notes" class="sm-textarea" style="height:60px;resize:none;" placeholder="Catatan tambahan..."></textarea>
+            </div>
+        `,
             icon: undefined,
             showCancelButton: true,
             confirmButtonText: 'Simpan Mapping',
@@ -627,8 +853,8 @@ function bindAssessorActions() {
                 const courseWrapper = document.getElementById('swal-mapping-course-wrapper');
                 const chipTidak = document.getElementById('chip-tidak');
                 const chipDiakui = document.getElementById('chip-diakui');
+                const filterRow = document.getElementById('swal-filter-row');
 
-                // Load study programs
                 apiRequest('/study-programs')
                     .then(response => {
                         const programs = collection(response);
@@ -648,9 +874,6 @@ function bindAssessorActions() {
                     fetchCourses(programSelect.value || null, semesterSelect.value || null)
                 );
 
-                // Chip toggle
-                const filterRow = document.getElementById('swal-filter-row');
-
                 const setRecognized = (value) => {
                     recognizedInput.value = value;
                     const isRecognized = value === '1';
@@ -659,7 +882,17 @@ function bindAssessorActions() {
                     courseWrapper.style.display = isRecognized ? 'block' : 'none';
                     filterRow.style.display = isRecognized ? 'flex' : 'none';
                     if (!isRecognized) {
-                        document.getElementById('swal-mapping-course').value = '';
+                        if (isA1) {
+                            const courseSelect = document.getElementById('swal-mapping-course');
+                            if (courseSelect) courseSelect.value = '';
+                        } else {
+                            document.querySelectorAll('.sm-course-checkbox').forEach(cb => cb.checked = false);
+                            syncMultiSelectTags();
+                            // Tutup panel kalau lagi buka
+                            document.getElementById('sm-ms-panel')?.classList.remove('open');
+                            document.getElementById('sm-ms-trigger')?.classList.remove('open');
+                            document.getElementById('sm-ms-chevron')?.classList.remove('open');
+                        }
                         programSelect.value = '';
                         semesterSelect.value = '';
                     }
@@ -667,23 +900,102 @@ function bindAssessorActions() {
 
                 chipTidak.addEventListener('click', () => setRecognized('0'));
                 chipDiakui.addEventListener('click', () => setRecognized('1'));
+
+                // ── Setup multi-select dropdown untuk A2 ──
+                if (!isA1) {
+                    const msTrigger = document.getElementById('sm-ms-trigger');
+                    const msPanel = document.getElementById('sm-ms-panel');
+                    const msChevron = document.getElementById('sm-ms-chevron');
+                    const msSearch = document.getElementById('sm-ms-search');
+
+                    let msOpen = false;
+
+                    const openPanel = () => {
+                        msOpen = true;
+                        msTrigger.classList.add('open');
+                        msTrigger.setAttribute('aria-expanded', 'true');
+                        msPanel.classList.add('open');
+                        msChevron.classList.add('open');
+                        setTimeout(() => msSearch?.focus(), 30);
+                    };
+
+                    const closePanel = () => {
+                        msOpen = false;
+                        msTrigger.classList.remove('open');
+                        msTrigger.setAttribute('aria-expanded', 'false');
+                        msPanel.classList.remove('open');
+                        msChevron.classList.remove('open');
+                        if (msSearch) msSearch.value = '';
+                        // Reset semua item yang tersembunyi saat search
+                        document.querySelectorAll('.sm-checkbox-item').forEach(item => item.style.display = '');
+                    };
+
+                    msTrigger.addEventListener('click', (e) => {
+                        // Klik X pada tag → hapus item, jangan toggle panel
+                        if (e.target.classList.contains('sm-ms-tag-x')) {
+                            const val = e.target.dataset.val;
+                            const cb = document.querySelector(`.sm-course-checkbox[value="${val}"]`);
+                            if (cb) { cb.checked = false; syncMultiSelectTags(); }
+                            return;
+                        }
+                        msOpen ? closePanel() : openPanel();
+                    });
+
+                    // Tutup panel kalau klik di luar area modal ini
+                    document.addEventListener('click', (e) => {
+                        if (!msOpen) return;
+                        if (!msTrigger.contains(e.target) && !msPanel.contains(e.target)) {
+                            closePanel();
+                        }
+                    });
+
+                    // Search filter
+                    msSearch?.addEventListener('input', () => {
+                        const q = msSearch.value.toLowerCase();
+                        document.querySelectorAll('.sm-checkbox-item').forEach(item => {
+                            item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
+                        });
+                    });
+
+                    // Keyboard: Enter / Space buka panel, Escape tutup
+                    msTrigger.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); msOpen ? closePanel() : openPanel(); }
+                        if (e.key === 'Escape') closePanel();
+                    });
+
+                    // Bind change event awal (sebelum course di-fetch)
+                    document.getElementById('swal-course-checkbox-list')?.addEventListener('change', syncMultiSelectTags);
+                }
             },
             preConfirm: () => {
                 const sourceId = document.getElementById('swal-mapping-source').value;
                 const recognized = document.getElementById('swal-mapping-recognized').value === '1';
-                const courseId = document.getElementById('swal-mapping-course').value;
                 const notes = document.getElementById('swal-mapping-notes').value.trim();
 
                 if (!sourceId) {
                     Swal.showValidationMessage(`Pilih ${sourceLabel} terlebih dahulu.`);
                     return false;
                 }
-                if (recognized && !courseId) {
-                    Swal.showValidationMessage('Pilih mata kuliah tujuan untuk mapping yang diakui.');
-                    return false;
+
+                if (recognized) {
+                    if (isA1) {
+                        const courseId = document.getElementById('swal-mapping-course').value;
+                        if (!courseId) {
+                            Swal.showValidationMessage('Pilih mata kuliah tujuan untuk mapping yang diakui.');
+                            return false;
+                        }
+                        return { sourceId, courseIds: [courseId], recognized, notes };
+                    } else {
+                        const checked = [...document.querySelectorAll('.sm-course-checkbox:checked')];
+                        if (!checked.length) {
+                            Swal.showValidationMessage('Pilih minimal satu mata kuliah tujuan untuk mapping yang diakui.');
+                            return false;
+                        }
+                        return { sourceId, courseIds: checked.map(cb => cb.value), recognized, notes };
+                    }
                 }
 
-                return { sourceId, courseId, recognized, notes };
+                return { sourceId, courseIds: [], recognized, notes };
             }
         }).then(async (result) => {
             if (!result.isConfirmed || !result.value) return;
@@ -699,29 +1011,40 @@ function bindAssessorActions() {
                 return;
             }
 
-            const { sourceId, courseId, recognized, notes } = result.value;
-
-            const payload = {};
-            if (isA1) {
-                payload.application_a1_course_id = Number(sourceId);
-            } else {
-                payload.application_a2_learning_experience_id = Number(sourceId);
-            }
-            if (recognized) {
-                payload.course_id = Number(courseId);
-            }
-            payload.is_recognized = recognized;
-            payload.notes = notes;
+            const { sourceId, courseIds, recognized, notes } = result.value;
 
             try {
-                await apiRequest(`/assessor/assessments/${assessmentState.assessmentId}/mappings`, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
+                if (!recognized || courseIds.length === 0) {
+                    const payload = { is_recognized: false, notes };
+                    if (isA1) {
+                        payload.application_a1_course_id = Number(sourceId);
+                    } else {
+                        payload.application_a2_learning_experience_id = Number(sourceId);
+                    }
+                    await apiRequest(`/assessor/assessments/${assessmentState.assessmentId}/mappings`, {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    for (const courseId of courseIds) {
+                        const payload = { is_recognized: true, course_id: Number(courseId), notes };
+                        if (isA1) {
+                            payload.application_a1_course_id = Number(sourceId);
+                        } else {
+                            payload.application_a2_learning_experience_id = Number(sourceId);
+                        }
+                        await apiRequest(`/assessor/assessments/${assessmentState.assessmentId}/mappings`, {
+                            method: 'POST',
+                            body: JSON.stringify(payload)
+                        });
+                    }
+                }
 
                 await Swal.fire({
                     title: 'Mapping Tersimpan',
-                    text: 'Mapping mata kuliah berhasil ditambahkan.',
+                    text: recognized && courseIds.length > 1
+                        ? `${courseIds.length} mata kuliah berhasil di-mapping.`
+                        : 'Mapping mata kuliah berhasil ditambahkan.',
                     icon: 'success',
                     confirmButtonText: 'Oke',
                     confirmButtonColor: '#2563eb',
