@@ -30,7 +30,7 @@ Dikembangkan dengan prinsip desain *Clean, Modern, dan Profesional*, G-RPL mengi
 ## ✨ Fitur Utama
 
 *   **Pendaftaran 100% Digital:** Pendaftar dapat mengunggah portofolio, sertifikat, dan bukti pengalaman kerja secara online.
-*   **Dukungan Tipe RPL A1 & A2:** Mengakomodasi berbagai skema RPL sesuai standar akademik.
+*   **Dukungan Tipe RPL A1, A2, Maupun Hybrid (Kombinasi A1 dan A2):** Mengakomodasi berbagai skema RPL sesuai standar akademik.
 *   **Role-Based Access Control (RBAC):** Portal dan dashboard spesifik untuk masing-masing peran (Applicant, Committee, Assessor, Admin).
 *   **Sistem Penilaian Terstruktur:** Asesor memiliki modul khusus untuk mengevaluasi dan memetakan pengalaman kerja ke dalam SKS/Mata Kuliah.
 *   **Pelacakan Status Real-time:** Pendaftar dapat memantau status aplikasi mereka dari `Draft` hingga `Approved` atau `Rejected`.
@@ -42,25 +42,25 @@ Dikembangkan dengan prinsip desain *Clean, Modern, dan Profesional*, G-RPL mengi
 
 Sistem G-RPL digerakkan oleh status aplikasi yang ketat untuk memastikan integritas data dan proses evaluasi yang benar:
 
-1.  **Draft:** Pendaftar (Applicant) membuat *Application Header* awal (Tipe A1/A2). Di tahap ini, pendaftar melengkapi profil dan dokumen pendukung.
+1.  **Draft:** Pendaftar (Applicant) membuat *Application Header* awal (Tipe A1/A2/Hybrid). Di tahap ini, pendaftar melengkapi profil dan dokumen pendukung.
 2.  **Submitted:** Pendaftar mengirimkan aplikasi untuk ditinjau. Data terkunci dan tidak dapat diubah oleh pendaftar.
 3.  **Under Review (Komite RPL):** Komite RPL melakukan verifikasi administratif terhadap kelengkapan dokumen. Jika valid, komite menugaskan Asesor yang sesuai.
 4.  **Under Assessment (Asesor):** Asesor yang ditugaskan melakukan evaluasi akademik/profesional terhadap dokumen pendaftar dan memetakannya ke mata kuliah yang relevan. Status berubah menjadi `Assessed`.
-5.  **Validasi Akhir (Komite RPL):** Komite RPL meninjau hasil penilaian asesor dan memberikan validasi akhir bahwa pengajuan telah disetujui. Setelah divalidasi, dokumen resmi (SK Rektor dan hasil assessment) siap untuk dicetak.
+5.  **Approved (Validasi Akhir oleh Komite RPL):** Komite RPL meninjau hasil penilaian asesor dan memberikan validasi akhir bahwa pengajuan telah disetujui. Setelah divalidasi, dokumen resmi (SK Rektor dan hasil assessment) siap untuk dicetak.
 
 ## 📦 Modul Sistem
 
 Project ini dibagi menjadi beberapa modul API utama:
 
-*   **Applicant Module:** Registrasi, pembuatan aplikasi (A1/A2), upload dokumen, pelacakan status.
-*   **Committee Module:** Verifikasi dokumen administrasi, penugasan asesor, validasi akhir pengajuan, dan cetak SK Rektor serta dokumen hasil assessment.
+*   **Applicant Module:** Registrasi, pembuatan aplikasi (A1/A2/Hybrid), upload dokumen, pelacakan status.
+*   **Staff Module:** Verifikasi dokumen administrasi, dan penugasan asesor.
 *   **Assessor Module:** Penilaian portofolio, evaluasi pengalaman kerja, pemetaan kompetensi ke kurikulum (Mata Kuliah/SKS).
-*   **Staff/Admin Module:** Manajemen program studi, manajemen pengguna, konfigurasi sistem.
-*   **Profile Module:** Manajemen data pribadi, riwayat pendidikan, dan pekerjaan pengguna.
+*   **Committee Module:** Validasi akhir pengajuan, dan cetak SK Rektor serta dokumen hasil assessment.
+*   **Admin Module:** Manajemen program studi, manajemen pengguna, konfigurasi sistem.
 
 ## 💻 Tech Stack
 
-*   **Backend Framework:** Laravel 11.x (PHP 8.2+)
+*   **Backend Framework:** Laravel 13.x (PHP 8.5+)
 *   **Frontend:** React (App.jsx) terintegrasi via Laravel Vite
 *   **Styling:** Tailwind CSS (Kustomisasi spesifik di `app.css`)
 *   **Database:** MySQL / PostgreSQL

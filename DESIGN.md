@@ -1,8 +1,8 @@
-# G-RPL2 Design System Documentation
+# G-RPL Design System Documentation
 
 ## 1. Konsep Desain Utama
 
-Global RPL (G-RPL2) adalah sistem digital terintegrasi untuk program Rekognisi Pembelajaran Lampau yang dirancang dengan prinsip:
+Global RPL (G-RPL) adalah sistem digital terintegrasi untuk program Rekognisi Pembelajaran Lampau yang dirancang dengan prinsip:
 
 - **Modern**: Menggunakan animasi halus, gradient modern, dan interaksi responsif
 - **Profesional**: Desain yang clean dan tidak berlebihan untuk kredibilitas akademik
@@ -106,7 +106,7 @@ Logo G-RPL terdiri dari 3 potongan berwarna yang membentuk satu kesatuan:
 - Section dengan background white
 - Grid 3 kolom (1:2 rasio)
 - Kiri: Deskripsi text
-- Kanan: 2 kartu (Tipe A dan Tipe B RPL)
+- Kanan: 3 kartu (Tipe A1, Tipe A2, dan Hybrid)
 - Banner bottom dengan gradient background
 
 **Components:**
@@ -609,6 +609,11 @@ Logo G-RPL terdiri dari 3 potongan berwarna yang membentuk satu kesatuan:
 
 ## 13. Implementasi Notes
 
+### Tech Stack
+- **Backend Framework**: Laravel 13.x (PHP 8.5+)
+- **Frontend**: React (App.jsx) terintegrasi via Laravel Vite
+- **Styling**: Tailwind CSS
+
 ### Desktop-Only Styling
 - Media query: `@media (min-width: 1024px)`
 - Sidebar sticky position
@@ -684,4 +689,4 @@ Logo G-RPL terdiri dari 3 potongan berwarna yang membentuk satu kesatuan:
 
 **Last Updated:** 2026-06-01
 **Version:** 1.0.0
-**Maintained by:** G-RPL2 Development Team
+**Maintained by:** G-RPL Development Team
