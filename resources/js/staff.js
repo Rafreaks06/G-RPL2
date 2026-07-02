@@ -2,7 +2,7 @@ import { apiRequest, downloadRequest } from './api.js';
 import {
     escapeHtml, collection, currentResourceId, setMessage, validationMessage,
     pageMessage, getApplicationTypeLabel, getApplicationStatusLabel,
-    allowedApplicationSections, syncApplicationSections
+    allowedApplicationSections, syncApplicationSections, formatFileSize
 } from './utils.js';
 import Swal from 'sweetalert2';
 
@@ -166,7 +166,7 @@ function renderDocuments(documents) {
             <tr>
                 <td>${escapeHtml(doc.document_name)}</td>
                 <td>${escapeHtml(doc.document_type)}</td>
-                <td>${escapeHtml(doc.file_size || '-')}</td>
+                <td>${escapeHtml(formatFileSize(doc.file_size))}</td>
                 <td>${escapeHtml(new Date(doc.created_at).toLocaleDateString('id-ID', {
             day: '2-digit',
             month: '2-digit',
