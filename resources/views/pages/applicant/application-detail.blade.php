@@ -496,6 +496,18 @@
         display: grid;
         gap: 18px;
         min-width: 0;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .application-detail-hero,
+    .application-detail-control-card,
+    .application-detail-section-card,
+    .application-detail-tab-content,
+    .application-detail-upload-card,
+    .application-detail-review-notes {
+        min-width: 0;
+        max-width: 100%;
     }
 
     .application-detail-hero,
@@ -535,6 +547,10 @@
         gap: 22px;
     }
 
+    .application-detail-hero-main > div {
+        min-width: 0;
+    }
+
     .application-detail-eyebrow {
         margin-bottom: 8px;
         color: #1565C0;
@@ -558,6 +574,8 @@
         font-size: 0.95rem;
         line-height: 1.7;
         font-weight: 650;
+        overflow-wrap: break-word;
+        word-break: break-word;
     }
 
     .application-detail-hero-actions {
@@ -1113,7 +1131,9 @@
 
     .application-detail-document-layout {
         display: grid;
+        grid-template-columns: 1fr;
         gap: 18px;
+        min-width: 0;
     }
 
     .application-detail-upload-card {
@@ -1443,7 +1463,7 @@
         border-top: 1px solid #edf2f7;
     }
 
-    @media (max-width: 1200px) {
+    @media (max-width: 1100px) {
         .application-detail-hero-main,
         .application-detail-control-head,
         .application-detail-section-head,
@@ -1471,42 +1491,81 @@
 
     @media (max-width: 900px) {
         .application-detail-stats,
-        .application-detail-tabs,
         .application-detail-upload-form,
-        .application-detail-modal-form {
-            grid-template-columns: 1fr;
+        .application-detail-modal-form,
+        .application-detail-document-layout {
+            grid-template-columns: 1fr !important;
         }
 
+        /* Bikin Tab Menu bisa di-swipe horizontal biar gak numpuk */
+        .application-detail-tabs {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 8px;
+            gap: 12px;
+            scrollbar-width: none; 
+        }
+        .application-detail-tabs::-webkit-scrollbar {
+            display: none; 
+        }
+        .application-detail-tab {
+            flex: 0 0 auto; 
+            width: auto !important;
+        }
+
+        .application-detail-stat-card {
+            padding: 14px;
+        }
+
+        /* Fix Tombol & Status Pill supaya teks bisa turun (wrap) */
         .application-detail-action-btn,
         .application-detail-back-btn,
         .application-detail-status-pill,
-        .application-detail-upload-btn {
-            width: 100%;
+        .application-detail-upload-btn,
+        .connection-pill {
+            width: 100% !important;
+            white-space: normal !important; /* Ini kunci utamanya */
+            height: auto !important;
+            min-height: 42px;
+            padding: 12px 16px !important;
+            text-align: center;
+            justify-content: center;
         }
 
         .application-detail-control-actions,
         .application-detail-hero-actions {
-            display: grid;
-            grid-template-columns: 1fr;
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            width: 100%;
+            gap: 10px; 
         }
 
         .application-detail-modal-actions {
             display: grid;
             grid-template-columns: 1fr;
+            gap: 10px;
         }
 
         .application-detail-modal-actions .application-detail-muted-btn,
         .application-detail-modal-actions .application-detail-upload-btn {
             width: 100%;
+            margin: 0;
         }
     }
 
     @media (max-width: 640px) {
+        .application-detail-workspace {
+            gap: 14px;
+        }
+
         .application-detail-hero,
         .application-detail-control-card,
         .application-detail-section-card,
-        .application-detail-upload-card {
-            border-radius: 24px;
+        .application-detail-upload-card,
+        .application-detail-review-notes {
+            border-radius: 20px; 
         }
 
         .application-detail-hero,
@@ -1516,16 +1575,26 @@
         }
 
         .application-detail-hero h2 {
-            font-size: 1.55rem;
+            font-size: 1.45rem;
+            letter-spacing: -0.05em;
         }
 
         .application-detail-subtitle {
             font-size: 0.84rem;
-            line-height: 1.62;
+            line-height: 1.5;
+        }
+
+        .application-detail-stats {
+            margin-top: 18px;
+        }
+
+        .application-detail-control-head,
+        .application-detail-section-head {
+            display: grid;
+            gap: 14px;
         }
 
         .application-detail-section-head {
-            display: grid;
             padding: 16px;
         }
 
@@ -1534,7 +1603,7 @@
         }
 
         .application-detail-table {
-            min-width: 680px;
+            min-width: 600px;
         }
 
         .application-detail-modal,
@@ -1546,7 +1615,7 @@
         .modal-content.application-detail-modal-content {
             width: calc(100vw - 24px);
             max-height: calc(100vh - 24px);
-            border-radius: 24px;
+            border-radius: 20px;
         }
 
         .application-detail-modal-header {
@@ -1556,6 +1625,41 @@
 
         .application-detail-modal-form {
             padding: 18px;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .application-detail-hero,
+        .application-detail-control-card,
+        .application-detail-upload-card {
+            padding: 14px;
+        }
+
+        .application-detail-stat-card {
+            align-items: flex-start;
+            padding: 13px;
+        }
+
+        .application-detail-stat-icon {
+            width: 40px;
+            height: 40px;
+            flex-basis: 40px;
+            border-radius: 15px;
+        }
+
+        .application-detail-stat-card strong {
+            font-size: 1.12rem;
+        }
+
+        .application-detail-tab {
+            min-height: 46px;
+            font-size: 0.82rem;
+            padding: 0 8px;
+        }
+
+        .application-detail-tab-icon {
+            width: 26px;
+            height: 26px;
         }
     }
 </style>
