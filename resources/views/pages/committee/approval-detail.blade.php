@@ -1024,7 +1024,7 @@
                     <span class="connection-pill" data-api-status>Connecting</span>
 
                     <a class="committee-action-btn muted" href="/approvals">
-                        ← Back
+                        ← Kembali
                     </a>
 
                     <button
