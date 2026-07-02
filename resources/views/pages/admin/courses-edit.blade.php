@@ -26,7 +26,7 @@
 
                         <a href="/admin/courses" class="course-edit-back-btn">
                             <span class="course-edit-back-icon">←</span>
-                            <span>Back to Courses</span>
+                            <span>Kembali</span>
                         </a>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
 
                         <div>
                             <p>Form Type</p>
-                            <strong>Edit Course</strong>
+                            <strong>Perbarui Matakuliah</strong>
                         </div>
                     </div>
 
@@ -54,7 +54,7 @@
 
                         <div>
                             <p>Data Scope</p>
-                            <strong>Study Program</strong>
+                            <strong>Program Studi</strong>
                         </div>
                     </div>
 
@@ -67,7 +67,7 @@
 
                         <div>
                             <p>Status</p>
-                            <strong>Ready to Update</strong>
+                            <strong>Pembaruan</strong>
                         </div>
                     </div>
                 </div>
@@ -80,22 +80,20 @@
                         <p>Ubah data mata kuliah berikut sesuai kebutuhan sistem G-RPL.</p>
                     </div>
 
-                    <span class="course-edit-panel-badge">Update Course</span>
+                    <span class="course-edit-panel-badge">Update Matakuliah</span>
                 </div>
 
                 <form class="form-grid course-edit-form" data-course-form="edit">
                     <label class="course-edit-field course-edit-full">
-                        <span>Study Programs</span>
+                        <span>Program Studi</span>
 
-                        <div class="course-edit-select-wrap">
-                            <select name="study_program_ids" data-study-program-select multiple required></select>
-                        </div>
+                        <div class="course-edit-checkbox-group" data-study-program-select data-required></div>
 
                         <small>Pilih satu atau beberapa program studi yang menggunakan mata kuliah ini.</small>
                     </label>
 
                     <label class="course-edit-field">
-                        <span>Code</span>
+                        <span>Kode MK</span>
 
                         <div class="course-edit-input-wrap">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -113,7 +111,7 @@
                     </label>
 
                     <label class="course-edit-field">
-                        <span>Name</span>
+                        <span>Nama MK</span>
 
                         <div class="course-edit-input-wrap">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -169,7 +167,7 @@
                     </label>
 
                     <label class="course-edit-field course-edit-full">
-                        <span>RPL Type</span>
+                        <span>Tipe RPL</span>
 
                         <div class="course-edit-select-wrap">
                             <select name="rpl_type" required>
@@ -187,11 +185,11 @@
 
                     <div class="course-edit-submit-row course-edit-full">
                         <a href="/admin/courses" class="course-edit-cancel-btn">
-                            Cancel
+                            Batal
                         </a>
 
                         <button class="course-edit-submit-btn" type="submit" data-submit-button>
-                            <span>Update Course</span>
+                            <span>Perbarui Matakuliah</span>
                         </button>
                     </div>
                 </form>
@@ -639,6 +637,50 @@
             min-height: 145px;
             padding: 12px;
             line-height: 1.55;
+        }
+
+        .course-edit-checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+            max-height: 190px;
+            overflow-y: auto;
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid #dbe3ee;
+            background: #ffffff;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.035);
+        }
+
+        .course-edit-checkbox-group .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-size: 0.86rem;
+            font-weight: 650;
+            color: #0f172a;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .course-edit-checkbox-group .checkbox-option:hover {
+            background: #f1f5f9;
+        }
+
+        .course-edit-checkbox-group .checkbox-option input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+            accent-color: #1565C0;
+            flex-shrink: 0;
+        }
+
+        .course-edit-checkbox-group .form-hint {
+            grid-column: 1 / -1;
+            margin: 0;
+            color: #94a3b8;
+            font-size: 0.86rem;
         }
 
         .course-edit-field input::placeholder {
