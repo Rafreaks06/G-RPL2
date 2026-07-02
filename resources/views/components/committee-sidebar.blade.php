@@ -5,22 +5,42 @@
     <div class="committee-sidebar-glow committee-sidebar-glow-2"></div>
 
     <div class="committee-sidebar-top">
-        {{-- Brand --}}
-        <a href="/approvals" class="committee-sidebar-brand" aria-label="G-RPL Committee Approvals">
-            <span class="committee-sidebar-logo">
-                @if (file_exists(public_path('images/logo.png')))
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo G-RPL">
-                @else
-                    <strong>G</strong>
-                @endif
-            </span>
+        <div class="committee-sidebar-topbar">
+            {{-- Brand --}}
+            <a href="/approvals" class="committee-sidebar-brand" aria-label="G-RPL Committee Approvals">
+                <span class="committee-sidebar-logo">
+                    @if (file_exists(public_path('images/logo.png')))
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo G-RPL">
+                    @else
+                        <strong>G</strong>
+                    @endif
+                </span>
 
-            <span class="committee-sidebar-brand-text">
-                <strong>G-RPL</strong>
-                <small>Committee Panel</small>
-            </span>
-        </a>
+                <span class="committee-sidebar-brand-text">
+                    <strong>G-RPL</strong>
+                    <small>Committee Panel</small>
+                </span>
+            </a>
 
+            <button
+                type="button"
+                id="committee-sidebar-menu-button"
+                class="committee-sidebar-menu-button"
+                aria-label="Buka menu"
+                aria-expanded="false"
+                aria-controls="committee-sidebar-collapse"
+            >
+                <svg id="committee-sidebar-menu-open" class="committee-sidebar-menu-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+                </svg>
+                <svg id="committee-sidebar-menu-close" class="committee-sidebar-menu-icon committee-sidebar-menu-icon-hidden" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="committee-sidebar-collapse" id="committee-sidebar-collapse">
         {{-- User Card --}}
         <div class="committee-sidebar-user">
             <div class="committee-sidebar-user-head">
@@ -36,48 +56,48 @@
                 <span class="committee-sidebar-role" data-user-role data-sidebar-user-role>Committee</span>
             </div>
         </div>
-    </div>
 
-    {{-- Menu --}}
-    <nav class="committee-sidebar-menu" aria-label="Committee Navigation">
-        <a href="/approvals"
-           class="committee-sidebar-link"
-           data-committee-sidebar-link="approvals">
-            <span class="committee-sidebar-link-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2Zm-1 16H6V5h12v14ZM8 7h8v2H8V7Zm0 4h8v2H8v-2Zm0 4h5v2H8v-2Z"/>
-                </svg>
-            </span>
-            <span class="committee-sidebar-link-text">Daftar Pengajuan</span>
-        </a>
+        {{-- Menu --}}
+        <nav class="committee-sidebar-menu" aria-label="Committee Navigation">
+            <a href="/approvals"
+               class="committee-sidebar-link"
+               data-committee-sidebar-link="approvals">
+                <span class="committee-sidebar-link-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2Zm-1 16H6V5h12v14ZM8 7h8v2H8V7Zm0 4h8v2H8v-2Zm0 4h5v2H8v-2Z"/>
+                    </svg>
+                </span>
+                <span class="committee-sidebar-link-text">Daftar Pengajuan</span>
+            </a>
 
-        <a href="/approvals/approved"
-           class="committee-sidebar-link"
-           data-committee-sidebar-link="approved">
-            <span class="committee-sidebar-link-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1.1 14.2-4-4 1.4-1.4 2.6 2.58 5.8-5.78 1.4 1.4-7.2 7.2Z"/>
-                </svg>
-            </span>
-            <span class="committee-sidebar-link-text">Pengajuan Disetujui</span>
-        </a>
-    </nav>
+            <a href="/approvals/approved"
+               class="committee-sidebar-link"
+               data-committee-sidebar-link="approved">
+                <span class="committee-sidebar-link-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1.1 14.2-4-4 1.4-1.4 2.6 2.58 5.8-5.78 1.4 1.4-7.2 7.2Z"/>
+                    </svg>
+                </span>
+                <span class="committee-sidebar-link-text">Pengajuan Disetujui</span>
+            </a>
+        </nav>
 
-    {{-- Bottom --}}
-    <div class="committee-sidebar-bottom">
-        <div class="committee-sidebar-help">
-            <span>Committee RPL Area</span>
-            <strong>Meninjau dan menyelesaikan proses persetujuan pengajuan RPL</strong>
+        {{-- Bottom --}}
+        <div class="committee-sidebar-bottom">
+            <div class="committee-sidebar-help">
+                <span>Committee RPL Area</span>
+                <strong>Meninjau dan menyelesaikan proses persetujuan pengajuan RPL</strong>
+            </div>
+
+            <button type="button" class="committee-sidebar-logout" data-logout onclick="committeeLogout()">
+                <span class="committee-sidebar-logout-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M10.09 15.59 11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59ZM19 3H5c-1.1 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2Z"/>
+                    </svg>
+                </span>
+                <span>Logout</span>
+            </button>
         </div>
-
-        <button type="button" class="committee-sidebar-logout" data-logout onclick="committeeLogout()">
-            <span class="committee-sidebar-logout-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M10.09 15.59 11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59ZM19 3H5c-1.1 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2Z"/>
-                </svg>
-            </span>
-            <span>Logout</span>
-        </button>
     </div>
 </aside>
 
@@ -152,7 +172,6 @@
         min-height: calc(100vh - 56px);
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
         isolation: isolate;
         overflow: hidden;
         padding: 20px;
@@ -217,6 +236,42 @@
     .committee-sidebar-top {
         display: grid;
         gap: 22px;
+    }
+
+    .committee-sidebar-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .committee-sidebar-menu-button {
+        display: none;
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .committee-sidebar-menu-button:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .committee-sidebar-menu-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .committee-sidebar-menu-icon-hidden {
+        display: none;
     }
 
     .committee-sidebar-brand {
@@ -287,9 +342,18 @@
         white-space: nowrap;
     }
 
+    .committee-sidebar-collapse {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 1;
+        min-height: 0;
+    }
+
     .committee-sidebar-user {
         position: relative;
         overflow: hidden;
+        margin-top: 22px;
         padding: 16px;
         border-radius: 22px;
         background:
@@ -486,7 +550,8 @@
     }
 
     .committee-sidebar-link:focus-visible,
-    .committee-sidebar-logout:focus-visible {
+    .committee-sidebar-logout:focus-visible,
+    .committee-sidebar-menu-button:focus-visible {
         box-shadow: 0 0 0 4px rgba(249, 168, 37, 0.18);
         border-color: rgba(249, 168, 37, 0.45);
     }
@@ -618,6 +683,19 @@
             position: relative;
             top: 0;
             min-height: auto;
+        }
+
+        .committee-sidebar-menu-button {
+            display: inline-flex;
+        }
+
+        .committee-sidebar-collapse {
+            display: none;
+            flex: initial;
+        }
+
+        .committee-sidebar-collapse.is-open {
+            display: flex;
         }
 
         .committee-sidebar-menu {
@@ -755,6 +833,42 @@
             if (element) {
                 const cleanRole = storedUserRole.replace(/_/g, ' ');
                 element.textContent = cleanRole.charAt(0).toUpperCase() + cleanRole.slice(1);
+            }
+        });
+
+        const menuButton = document.getElementById('committee-sidebar-menu-button');
+        const collapse = document.getElementById('committee-sidebar-collapse');
+        const menuOpenIcon = document.getElementById('committee-sidebar-menu-open');
+        const menuCloseIcon = document.getElementById('committee-sidebar-menu-close');
+
+        if (!menuButton || !collapse) {
+            return;
+        }
+
+        function setMenuState(isOpen) {
+            collapse.classList.toggle('is-open', isOpen);
+            menuOpenIcon?.classList.toggle('committee-sidebar-menu-icon-hidden', isOpen);
+            menuCloseIcon?.classList.toggle('committee-sidebar-menu-icon-hidden', !isOpen);
+            menuButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+
+        menuButton.addEventListener('click', function () {
+            setMenuState(!collapse.classList.contains('is-open'));
+        });
+
+        // Auto-tutup menu tiap klik link (biar gak nyangkut kebuka pas pindah halaman)
+        links.forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (window.matchMedia('(max-width: 900px)').matches) {
+                    setMenuState(false);
+                }
+            });
+        });
+
+        // Reset state kalau resize dari mobile balik ke desktop
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 900) {
+                setMenuState(false);
             }
         });
     });
