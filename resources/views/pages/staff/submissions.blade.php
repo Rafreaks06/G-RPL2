@@ -46,9 +46,8 @@
 
     .staff-topbar {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 18px;
+        flex-direction: column;
+        gap: 14px;
         margin-bottom: 24px;
         padding: 18px;
         border: 1px solid var(--staff-border);
@@ -58,11 +57,47 @@
         box-shadow: 0 18px 50px rgba(15, 23, 42, .075);
     }
 
+    .staff-topbar-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+    }
+
     .staff-brand {
         display: flex;
         align-items: center;
         gap: 14px;
         min-width: 0;
+    }
+
+    .staff-menu-button {
+        display: none;
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        color: var(--staff-dark);
+        background: #f8fafc;
+        border: 1px solid rgba(148, 163, 184, .3);
+        cursor: pointer;
+        transition: background .2s ease, border-color .2s ease;
+    }
+
+    .staff-menu-button:hover {
+        background: #eef2ff;
+        border-color: rgba(37, 99, 235, .28);
+    }
+
+    .staff-menu-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .staff-menu-icon-hidden {
+        display: none;
     }
 
     .staff-logo {
@@ -537,14 +572,27 @@
     }
 
     @media (max-width: 900px) {
-        .staff-topbar,
+        .staff-menu-button {
+            display: inline-flex;
+        }
+
+        .staff-top-actions {
+            display: none;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .staff-top-actions.is-open {
+            display: flex;
+        }
+
         .staff-card-header,
         .staff-toolbar {
             align-items: stretch;
             flex-direction: column;
         }
 
-        .staff-top-actions,
         .staff-status-wrap {
             justify-content: flex-start;
         }
@@ -564,10 +612,6 @@
             padding: 16px;
         }
 
-        .staff-brand {
-            align-items: flex-start;
-        }
-
         .staff-logo {
             width: 46px;
             height: 46px;
@@ -581,12 +625,6 @@
 
         .staff-brand-text p {
             font-size: 12px;
-        }
-
-        .staff-top-actions {
-            display: grid;
-            grid-template-columns: 1fr;
-            width: 100%;
         }
 
         .staff-nav-link,
@@ -666,6 +704,42 @@
         document.querySelectorAll('[data-staff-user-name]').forEach(function (el) {
             el.textContent = name;
         });
+
+        const menuButton = document.getElementById('staff-menu-button');
+        const collapse = document.getElementById('staff-top-actions');
+        const menuOpenIcon = document.getElementById('staff-menu-open');
+        const menuCloseIcon = document.getElementById('staff-menu-close');
+
+        if (!menuButton || !collapse) {
+            return;
+        }
+
+        function setMenuState(isOpen) {
+            collapse.classList.toggle('is-open', isOpen);
+            menuOpenIcon?.classList.toggle('staff-menu-icon-hidden', isOpen);
+            menuCloseIcon?.classList.toggle('staff-menu-icon-hidden', !isOpen);
+            menuButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+
+        menuButton.addEventListener('click', function () {
+            setMenuState(!collapse.classList.contains('is-open'));
+        });
+
+        // Auto-tutup menu tiap klik link/tombol di dalam actions
+        collapse.querySelectorAll('a, button').forEach(function (el) {
+            el.addEventListener('click', function () {
+                if (window.matchMedia('(max-width: 900px)').matches) {
+                    setMenuState(false);
+                }
+            });
+        });
+
+        // Reset state kalau resize dari mobile balik ke desktop
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 900) {
+                setMenuState(false);
+            }
+        });
     });
 </script>
 
@@ -673,17 +747,35 @@
     <div class="staff-container">
 
         <header class="staff-topbar">
-            <div class="staff-brand">
-                <div class="staff-logo">RPL</div>
+            <div class="staff-topbar-head">
+                <div class="staff-brand">
+                    <div class="staff-logo">RPL</div>
 
-                <div class="staff-brand-text">
-                    <small>Staff Panel</small>
-                    <h1>Submission Review</h1>
-                    <p>Panel pemeriksaan administrasi pengajuan RPL.</p>
+                    <div class="staff-brand-text">
+                        <small>Staff Panel</small>
+                        <h1>Submission Review</h1>
+                        <p>Panel pemeriksaan administrasi pengajuan RPL.</p>
+                    </div>
                 </div>
+
+                <button
+                    type="button"
+                    id="staff-menu-button"
+                    class="staff-menu-button"
+                    aria-label="Buka menu"
+                    aria-expanded="false"
+                    aria-controls="staff-top-actions"
+                >
+                    <svg id="staff-menu-open" class="staff-menu-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    </svg>
+                    <svg id="staff-menu-close" class="staff-menu-icon staff-menu-icon-hidden" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    </svg>
+                </button>
             </div>
 
-            <div class="staff-top-actions">
+            <div class="staff-top-actions" id="staff-top-actions">
                 <span class="staff-user-pill">
                     <span class="staff-user-pill-dot"></span>
                     <span class="staff-user-pill-text">
